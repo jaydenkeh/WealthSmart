@@ -231,7 +231,9 @@ const SignupPage = () => {
                 />
                 <p
                   id="confirmnote"
-                  className={!validMatch ? "instructions" : "offscreen"}
+                  className={
+                    matchPwd && !validMatch ? "instructions" : "offscreen"
+                  }
                 >
                   <FontAwesomeIcon icon={faInfoCircle} />
                   Must match the first password input field.
