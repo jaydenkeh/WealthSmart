@@ -17,8 +17,6 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = ""; // insert backend API url here
 
 const SignupPage = () => {
-  const errRef = useRef();
-
   const [userName, setUsername] = useState("");
   const [validName, setValidName] = useState(false);
 
