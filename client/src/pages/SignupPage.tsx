@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, SyntheticEvent } from "react";
 import { Link } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -9,7 +9,7 @@ import {
   faInfoCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -51,8 +51,44 @@ const SignupPage = () => {
     setErrMsg("");
   }, [userName, email, password, matchPwd]);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
+  const handleSubmit = async (e: SyntheticEvent) => {
+    e.preventDefault();
+    const v1 = USER_REGEX.test(userName);
+    const v2 = EMAIL_REGEX.test(email);
+    const v3 = PWD_REGEX.test(password);
+    if (!v1 || !v2 || !v3) {
+      setErrMsg("Invalid Entry");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        REGISTER_URL,
+        JSON.stringify({ userName, email, password }),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log(response?.data);
+      console.log(JSON.stringify(response));
+      setSuccess(true);
+      //clear state and controlled inputs
+      setUsername("");
+      setEmail("");
+      setPwd("");
+      setMatchPwd("");
+    } catch (err: any) {
+      if (typeof err === "object" && "response" in err) {
+        const axiosError = err as AxiosError;
+        if (axiosError?.response?.status === 409) {
+          setErrMsg("Username Taken");
+        } else {
+          setErrMsg("Registration Failed");
+        }
+      } else {
+        setErrMsg("No Server Response");
+      }
+    }
+  };
 
   return (
     <>
@@ -70,7 +106,7 @@ const SignupPage = () => {
           </p>
           <FormContainer>
             <h1>Sign Up</h1>
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Form.Group className="my-3" controlId="userName">
                 <Form.Label>Username</Form.Label>
                 <FontAwesomeIcon
