@@ -21,14 +21,24 @@ const MainDashboard: React.FC = () => {
   const [gainers, setGainers] = useState<Data[] | null>(null);
   const [losers, setLosers] = useState<Data[] | null>(null);
 
-  const fetchGainers = async () => {
+  const fetchGainLose = async () => {
     try {
-      const response = await axios.get<Data[]>(
-        `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY}`
-      );
-      if (response.data) {
-        setGainers(response.data);
-        console.log(response.data);
+      const [gainersResponse, losersResponse] = await axios.all([
+        axios.get<Data[]>(
+          `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY}`
+        ),
+        axios.get<Data[]>(
+          `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY}`
+        ),
+      ]);
+      // const response = await axios.get<Data[]>(
+      //   `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY}`
+      // );
+      if (gainersResponse && losersResponse) {
+        setGainers(gainersResponse.data);
+        setLosers(losersResponse.data);
+        console.log(gainersResponse.data);
+        console.log(losersResponse.data);
       }
     } catch (err) {
       console.log(err);
@@ -36,13 +46,13 @@ const MainDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchGainers();
+    fetchGainLose();
   }, []);
 
   return (
     <>
       <h2>US STOCK MARKET</h2>
-      <h3>Today Top Gainers</h3>
+      <h4>Today Top Gainers</h4>
       <Table striped>
         <thead>
           <tr>
@@ -53,7 +63,6 @@ const MainDashboard: React.FC = () => {
             <th>Change %</th>
           </tr>
         </thead>
-        {/* To map out the table body*/}
         <tbody>
           {gainers &&
             gainers.map((data, i) => (
@@ -67,7 +76,30 @@ const MainDashboard: React.FC = () => {
             ))}
         </tbody>
       </Table>
-      <h3>Today Top Losers</h3>
+      <h4>Today Top Losers</h4>
+      <Table striped>
+        <thead>
+          <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Change</th>
+            <th>Change %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {losers &&
+            losers.map((data, i) => (
+              <tr key={i}>
+                <td>{data?.symbol}</td>
+                <td>{data?.name}</td>
+                <td>{data?.price}</td>
+                <td>{data?.change}</td>
+                <td>{data?.changesPercentage}</td>
+              </tr>
+            ))}
+        </tbody>
+      </Table>
     </>
   );
 };
