@@ -16,7 +16,7 @@ const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 const REGISTER_URL = ""; // insert backend API url here
 
-const SignupPage = () => {
+const SignupPage: React.FC = () => {
   const [userName, setUsername] = useState("");
   const [validName, setValidName] = useState(false);
 

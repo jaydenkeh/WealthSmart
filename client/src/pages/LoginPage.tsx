@@ -7,7 +7,7 @@ import axios, { AxiosError } from "axios";
 
 const LOGIN_URL = ""; // insert backend API url here
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
