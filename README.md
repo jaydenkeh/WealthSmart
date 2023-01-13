@@ -19,4 +19,6 @@ For this project, I've used the following technologies:
 
 ## API Used
 
+- Financial Modeling Prep API
+
 ## References

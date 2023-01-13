@@ -31,9 +31,6 @@ const MainDashboard: React.FC = () => {
           `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY}`
         ),
       ]);
-      // const response = await axios.get<Data[]>(
-      //   `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY}`
-      // );
       if (gainersResponse && losersResponse) {
         setGainers(gainersResponse.data);
         setLosers(losersResponse.data);
