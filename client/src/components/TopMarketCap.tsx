@@ -15,6 +15,7 @@ interface Data {
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
+const MARKET_CAP_URL = `https://financialmodelingprep.com/api/v3/stock-screener`;
 
 const TopMarketCap: React.FC = () => {
   const [market, setMarket] = useState<Data[] | null>(null);
@@ -24,10 +25,15 @@ const TopMarketCap: React.FC = () => {
   const fetchMarket = async () => {
     setLoading(true); // to implement loading component
     try {
-      const response = await axios.get<Data[]>(
-        `https://financialmodelingprep.com/api/v3/stock-screener?marketCapMoreThan=75000000000&isEtf=false&isActivelyTrading:true&apikey=${FINANCIAL_MODELING_API_KEY}`
-      );
-
+      const response = await axios.get<Data[]>(MARKET_CAP_URL, {
+        params: {
+          marketCapMoreThan: 75000000000,
+          isEtf: false,
+          isActivelyTrading: true,
+          exchange: "NYSE,NASDAQ",
+          apikey: FINANCIAL_MODELING_API_KEY,
+        },
+      });
       if (response) {
         setMarket(response.data);
         console.log(response.data);
