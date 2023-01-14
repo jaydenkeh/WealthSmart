@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
 
@@ -18,6 +19,7 @@ const FINANCIAL_MODELING_API_KEY = import.meta.env
 const TopMarketCap: React.FC = () => {
   const [market, setMarket] = useState<Data[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const fetchMarket = async () => {
     setLoading(true); // to implement loading component
@@ -62,7 +64,14 @@ const TopMarketCap: React.FC = () => {
               .filter((data) => data.volume && data.industry)
               .map((data, i) => (
                 <tr key={i}>
-                  <td>{data?.symbol}</td>
+                  <td>
+                    <span
+                      className="symbol-button"
+                      onClick={() => navigate(`/symbol/${data.symbol}`)}
+                    >
+                      {data?.symbol}
+                    </span>
+                  </td>
                   <td>{data?.companyName}</td>
                   <td>{data?.marketCap}</td>
                   <td>{data?.price}</td>

@@ -45,3 +45,16 @@ section {
   padding: 0.5rem;
   margin-bottom: 0.5rem;
 }
+
+.symbol-button {
+  cursor: pointer;
+  padding: 0.5em 1em;
+  background: #2196f3;
+  color: #fff;
+  border-radius: 4px;
+  transition: background 250ms ease-in-out, transform 150ms ease;
+  text-align: center;
+}
+.symbol-button:hover {
+  background: #105166;
+}
