@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import TopMarketCap from "./TopMarketCap";
 import TopGainersLosers from "./TopGainersLosers";
 
 //TODO set up toggles to toggle between the different markets
@@ -15,6 +16,7 @@ const MainDashboard: React.FC = () => {
   return (
     <>
       <h2>US STOCK MARKET</h2>
+      <TopMarketCap />
       <TopGainersLosers />
     </>
   );

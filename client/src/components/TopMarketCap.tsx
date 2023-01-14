@@ -23,7 +23,7 @@ const TopMarketCap: React.FC = () => {
     setLoading(true); // to implement loading component
     try {
       const response = await axios.get<Data[]>(
-        `https://financialmodelingprep.com/api/v3/stock-screener?marketCapMoreThan=75000000000&apikey=${FINANCIAL_MODELING_API_KEY}`
+        `https://financialmodelingprep.com/api/v3/stock-screener?marketCapMoreThan=75000000000&isEtf=false&isActivelyTrading:true&apikey=${FINANCIAL_MODELING_API_KEY}`
       );
 
       if (response) {
