@@ -58,17 +58,19 @@ const TopMarketCap: React.FC = () => {
         </thead>
         <tbody>
           {market &&
-            market.map((data, i) => (
-              <tr key={i}>
-                <td>{data?.symbol}</td>
-                <td>{data?.companyName}</td>
-                <td>{data?.marketCap}</td>
-                <td>{data?.price}</td>
-                <td>{data?.volume}</td>
-                <td>{data?.exchangeShortName}</td>
-                <td>{data?.industry}</td>
-              </tr>
-            ))}
+            market
+              .filter((data) => data.volume && data.industry)
+              .map((data, i) => (
+                <tr key={i}>
+                  <td>{data?.symbol}</td>
+                  <td>{data?.companyName}</td>
+                  <td>{data?.marketCap}</td>
+                  <td>{data?.price}</td>
+                  <td>{data?.volume}</td>
+                  <td>{data?.exchangeShortName}</td>
+                  <td>{data?.industry}</td>
+                </tr>
+              ))}
         </tbody>
       </Table>
     </>
