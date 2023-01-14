@@ -17,6 +17,9 @@ For this project, I've used the following technologies:
 
 ## Planning and Development Process
 
+- [x] Setup sign up and login pages with React Boostrap and Fontawesome
+- [x] Setup main dashboard to display U.S. stocks market daily top gainers and losers
+
 ## API Used
 
 - Financial Modeling Prep API
