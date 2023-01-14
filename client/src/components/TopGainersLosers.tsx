@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
 
-interface gainloseData {
+interface Data {
   symbol: string;
   name: string;
   price: number;
@@ -14,16 +14,16 @@ const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
 
 const TopGainersLosers: React.FC = () => {
-  const [gainers, setGainers] = useState<gainloseData[] | null>(null);
-  const [losers, setLosers] = useState<gainloseData[] | null>(null);
+  const [gainers, setGainers] = useState<Data[] | null>(null);
+  const [losers, setLosers] = useState<Data[] | null>(null);
 
   const fetchGainLose = async () => {
     try {
       const [gainersResponse, losersResponse] = await axios.all([
-        axios.get<gainloseData[]>(
+        axios.get<Data[]>(
           `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY}`
         ),
-        axios.get<gainloseData[]>(
+        axios.get<Data[]>(
           `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY}`
         ),
       ]);
