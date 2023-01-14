@@ -17,8 +17,10 @@ For this project, I've used the following technologies:
 
 ## Planning and Development Process
 
-- [x] Setup sign up and login pages with React Boostrap and Fontawesome
-- [x] Setup main dashboard to display U.S. stocks market daily top gainers and losers
+- [x] Setup Signup and Login pages with React Boostrap and Fontawesome
+- [x] Setup Home page with navigation bar and main dashboard components
+- [x] Setup U.S. stocks market daily top gainers and losers component and inserted to main dashboard
+- [x] Setup largest companies by market capitalization component and inserted to main dashboard
 
 ## API Used
 
