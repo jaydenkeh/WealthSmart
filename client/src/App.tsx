@@ -11,6 +11,10 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="signup" element={<SignupPage />} />
         <Route path="login" element={<LoginPage />} />
+        <Route
+          path="*"
+          element={<p>The page you are searching is not found</p>}
+        />
       </Routes>
     </div>
   );
