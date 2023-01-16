@@ -6,21 +6,60 @@ import HighchartsReact from "highcharts-react-official";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
+const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_2;
+
+interface Data {
+  adjClose: number;
+  change: number;
+  changeOverTime: number;
+  changePercent: number;
+  close: number;
+  date: string;
+  high: number;
+  label: string;
+  low: number;
+  open: number;
+  unadjustedVolume: number;
+  volume: number;
+  vwap: number;
+}
 
 const SymbolPage: React.FC = () => {
   const params = useParams();
-  const [daily, setDaily] = useState([]);
+  const [dailyData, setDailyData] = useState<Data[]>([]);
+  const [chartData, setChartData] = useState<number[][]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchDaily();
+  }, [params.symbol]);
+
+  useEffect(() => {
+    if (Array.isArray(dailyData)) {
+      let data = dailyData.map((item: Data) => {
+        return [
+          Date.parse(item.date),
+          item.open,
+          item.high,
+          item.low,
+          item.close,
+        ];
+      });
+      setChartData(data);
+      console.log(chartData);
+    }
+  }, [dailyData]);
 
   const fetchDaily = async () => {
     setLoading(true); // to implement loading component
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response) {
-        setDaily(response.data);
-        console.log(response.data);
+        setDailyData(response.data.historical);
+        console.log(response.data.historical);
       }
     } catch (err) {
       console.log(err);
@@ -29,53 +68,29 @@ const SymbolPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchDaily();
-  }, [params.symbol]);
-
-  const options: Highcharts.Options = {
-    title: {
-      text: "1-minute and 5-minute Candlestick Chart",
+  const options = {
+    chart: {
+      type: "candlestick",
+      zoomType: "x",
     },
-    plotOptions: {
-      candlestick: {
-        dataGrouping: {
-          forced: true,
-          units: [["minute", [1]]],
-        },
+    title: {
+      text: "Daily Candlestick Chart",
+    },
+    xAxis: {
+      type: "datetime",
+    },
+    yAxis: {
+      title: {
+        text: "Price",
       },
     },
     series: [
       {
         type: "candlestick",
-        name: "1-minute Candlesticks",
-        upColor: "green",
-        color: "red",
-        data: [
-          [1483228800000, 36.35, 36.45, 36.05, 36.25],
-          [1483228800000, 36.35, 45, 36.05, 36.25],
-          [1483228800000, 36.35, 46.45, 36.05, 36.25],
-          [1483228800000, 36.35, 56.45, 36.05, 36.25],
-          [1483228800000, 36.35, 76.45, 36.05, 36.25],
-          [1483315200000, 36.3, 36.4, 36.15, 36.35],
-          [1483401600000, 36.35, 36.4, 36.25, 36.3],
-          [1483488000000, 36.4, 36.45, 36.35, 36.4],
-          [1483574400000, 36.45, 36.5, 36.4, 36.45],
-        ],
-      },
-      {
-        type: "candlestick",
-        name: "5-minute Candlesticks",
-        dataGrouping: {
-          units: [["minute", [5]]],
-        },
-        data: [
-          [1483228800000, 36.35, 36.45, 36.05, 36.25],
-          [1483315200000, 36.3, 36.4, 36.15, 36.35],
-          [1483401600000, 36.35, 36.4, 36.25, 36.3],
-          [1483488000000, 36.4, 36.45, 36.35, 36.4],
-          [1483574400000, 36.45, 36.5, 36.4, 36.45],
-        ],
+        name: "Daily Candlesticks",
+        data: chartData,
+        pointWidth: 16,
+        turboThreshold: 0,
       },
     ],
   };
