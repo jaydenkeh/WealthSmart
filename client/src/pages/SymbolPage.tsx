@@ -1,11 +1,9 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-const params = useParams();
-let test = params.symbol;
-console.log(test);
-
 const SymbolPage: React.FC = () => {
+  const params = useParams();
+
   return <div>Symbol Page</div>;
 };
 
