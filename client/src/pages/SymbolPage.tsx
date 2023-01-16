@@ -1,5 +1,18 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+
+const options = {
+  title: {
+    text: "My chart",
+  },
+  series: [
+    {
+      data: [1, 2, 3],
+    },
+  ],
+};
 
 const SymbolPage: React.FC = () => {
   const params = useParams();
@@ -7,6 +20,7 @@ const SymbolPage: React.FC = () => {
   return (
     <>
       <h2>US</h2>
+      <HighchartsReact highcharts={Highcharts} options={options} />
     </>
   );
 };
