@@ -58,3 +58,8 @@ section {
 .symbol-button:hover {
   background: #105166;
 }
+
+.company-data-container {
+  display: flex;
+  justify-content: space-around;
+}

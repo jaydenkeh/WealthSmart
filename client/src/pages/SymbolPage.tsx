@@ -23,17 +23,33 @@ interface Data {
   open: number;
   unadjustedVolume: number;
   volume: number;
-  vwap: number;
+}
+
+interface CompanyQuote {
+  name: string;
+  symbol: string;
+  price: number;
+  changesPercentage: number;
+  change: number;
+  dayLow: number;
+  dayHigh: number;
+  yearLow: number;
+  yearHigh: number;
+  volume: number;
+  open: number;
+  previousClose: number;
 }
 
 const SymbolPage: React.FC = () => {
   const params = useParams();
   const [dailyData, setDailyData] = useState<Data[]>([]);
   const [chartData, setChartData] = useState<number[][]>([]);
+  const [companyQuote, setCompanyQuote] = useState<CompanyQuote[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchDaily();
+    fetchCompanyQuote();
   }, [params.symbol]);
 
   useEffect(() => {
@@ -56,11 +72,28 @@ const SymbolPage: React.FC = () => {
     setLoading(true); // to implement loading component
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
       );
       if (response) {
         setDailyData(response.data.historical);
         console.log(response.data.historical);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCompanyQuote = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
+      );
+      if (response) {
+        setCompanyQuote(response.data);
+        console.log(response.data);
       }
     } catch (err) {
       console.log(err);
@@ -98,7 +131,37 @@ const SymbolPage: React.FC = () => {
 
   return (
     <>
-      <h2>US</h2>
+      {companyQuote &&
+        companyQuote.map((data, i) => (
+          <div key={i} className="company-quote">
+            <h3>
+              {data.name} - {data.symbol}
+            </h3>
+            <p>
+              Price: {data.price}
+              <br />
+              Change: {data.change} ({data.changesPercentage})
+            </p>
+            <div className="company-data-container">
+              <p>
+                High: {data.dayHigh}
+                <br />
+                Low: {data.dayLow}
+              </p>
+              <p>
+                52 weeks High: {data.yearHigh}
+                <br />
+                52 weeks Low: {data.yearLow}
+              </p>
+              <p>
+                Open: {data.open}
+                <br />
+                Previous Close: {data.previousClose}
+              </p>
+              <p>Volume: {data.volume}</p>
+            </div>
+          </div>
+        ))}
       <HighchartsReact highcharts={Highcharts} options={options} />
       <Trading />
     </>
