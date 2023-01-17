@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
+import Trading from "../components/Trading";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -99,6 +100,7 @@ const SymbolPage: React.FC = () => {
     <>
       <h2>US</h2>
       <HighchartsReact highcharts={Highcharts} options={options} />
+      <Trading />
     </>
   );
 };
