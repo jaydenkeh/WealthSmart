@@ -11,7 +11,6 @@ signupRouter.post("/", async (req: Request, res: Response) => {
         userName: req.body.userName,
         email: req.body.email,
         password: req.body.password,
-        confirmpassword: req.body.confirmpassword,
       },
     });
     res.json(user);

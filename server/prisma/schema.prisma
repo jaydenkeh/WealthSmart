@@ -1,5 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Steps to update schema after adding new ones or editing existing
+// i. npx prisma migrate dev --name init
+//ii. npx prisma generate
 
 generator client {
   provider = "prisma-client-js"
