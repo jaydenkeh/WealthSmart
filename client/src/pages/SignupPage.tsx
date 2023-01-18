@@ -81,7 +81,9 @@ const SignupPage: React.FC = () => {
       if (typeof err === "object" && "response" in err) {
         const axiosError = err as AxiosError;
         if (axiosError?.response?.status === 409) {
-          setErrMsg("Username Taken");
+          setErrMsg(
+            "Existing user with email in use, please use a different email"
+          );
         } else {
           setErrMsg("Registration Failed");
         }
