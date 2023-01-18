@@ -61,13 +61,16 @@ const SignupPage: React.FC = () => {
     try {
       const response = await axios.post(
         REGISTER_URL,
-        JSON.stringify({ userName, email, password }),
+        {
+          userName: userName,
+          email: email,
+          password: password,
+        },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
       console.log(response?.data);
-      console.log(JSON.stringify(response));
       setSuccess(true);
       //clear state and controlled inputs
       setUsername("");
@@ -94,7 +97,7 @@ const SignupPage: React.FC = () => {
         <section>
           <h1>Success!</h1>
           <p>
-            <a href="#">Sign In</a>
+            <a href="/login">Sign In</a>
           </p>
         </section>
       ) : (
