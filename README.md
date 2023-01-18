@@ -16,6 +16,7 @@ For this project, I've used the following technologies:
 - Prisma
 - ExpressJS
 - JWT
+- bcrypt (for password hashing)
 
 ## Planning and Development Process
 
