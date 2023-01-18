@@ -5,7 +5,7 @@ import Form from "react-bootstrap/Form";
 import FormContainer from "../components/FormContainer";
 import axios, { AxiosError } from "axios";
 
-const LOGIN_URL = ""; // insert backend API url here
+const LOGIN_URL = "http://localhost:3000/api/login";
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -22,7 +22,10 @@ const LoginPage: React.FC = () => {
     try {
       const response = await axios.post(
         LOGIN_URL,
-        JSON.stringify({ email, password }),
+        {
+          email: email,
+          password: password,
+        },
         {
           headers: { "Content-Type": "application/json" },
         }

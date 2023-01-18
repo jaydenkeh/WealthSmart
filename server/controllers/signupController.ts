@@ -15,7 +15,6 @@ signupRouter.post("/", async (req: Request, res: Response) => {
         .status(409)
         .json({ message: "Email in use, please use a different one" });
     }
-
     const salt = await bcrypt.genSalt(Number(process.env.SALT));
     const hashPassword = await bcrypt.hash(req.body.password, salt);
     const user = await prisma.user.create({
