@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import crypto from "crypto";
 
 const prisma = new PrismaClient();
 const loginRouter = express.Router();
@@ -23,13 +22,13 @@ loginRouter.post("/", async (req: Request, res: Response) => {
 });
 
 function createJWT(userId: number) {
-  const secret = crypto.randomBytes(32).toString("base64");
+  const secret = process.env.JWT_SECRET;
   const expiresIn = "1d";
   const payload = {
     sub: userId,
     iat: Date.now(),
   };
-  return jwt.sign(payload, secret, { expiresIn });
+  return jwt.sign(payload, secret as string, { expiresIn });
 }
 
 export { loginRouter };

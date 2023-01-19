@@ -5,7 +5,7 @@ import path from "path";
 import { signupRouter } from "./controllers/signupController";
 import { loginRouter } from "./controllers/loginController";
 
-const PORT = 3000;
+const PORT = process.env.PORT;
 const app = express();
 
 app.use(express.json());
