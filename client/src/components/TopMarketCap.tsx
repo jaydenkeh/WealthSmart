@@ -15,6 +15,9 @@ interface Data {
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
+const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_2;
+
 const MARKET_CAP_URL = `https://financialmodelingprep.com/api/v3/stock-screener`;
 
 const TopMarketCap: React.FC = () => {
@@ -40,6 +43,19 @@ const TopMarketCap: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
+      const response = await axios.get<Data[]>(MARKET_CAP_URL, {
+        params: {
+          marketCapMoreThan: 75000000000,
+          isEtf: false,
+          isActivelyTrading: true,
+          exchange: "NYSE,NASDAQ",
+          apikey: FINANCIAL_MODELING_API_KEY_2,
+        },
+      });
+      if (response) {
+        setMarket(response.data);
+        console.log(response.data);
+      }
     } finally {
       setLoading(false);
     }

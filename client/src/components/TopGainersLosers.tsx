@@ -12,10 +12,13 @@ interface Data {
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
+const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_2;
 
 const TopGainersLosers: React.FC = () => {
   const [gainers, setGainers] = useState<Data[] | null>(null);
   const [losers, setLosers] = useState<Data[] | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchGainLose = async () => {
     try {
@@ -35,6 +38,22 @@ const TopGainersLosers: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
+      const [gainersResponse, losersResponse] = await axios.all([
+        axios.get<Data[]>(
+          `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+        ),
+        axios.get<Data[]>(
+          `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+        ),
+      ]);
+      if (gainersResponse && losersResponse) {
+        setGainers(gainersResponse.data);
+        setLosers(losersResponse.data);
+        console.log(gainersResponse.data);
+        console.log(losersResponse.data);
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
