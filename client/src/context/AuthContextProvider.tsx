@@ -56,7 +56,7 @@ export const AuthContextProvider = ({
     } else {
       setUserInfo({ email: null, id: null, loading: false });
     }
-  }, []);
+  }, [token]);
 
   return (
     <UserContext.Provider value={{ userinfo, setUserInfo }}>
