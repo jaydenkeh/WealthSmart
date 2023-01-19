@@ -30,10 +30,10 @@ const LoginPage: React.FC = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(JSON.stringify(response?.data));
       setEmail("");
       setPwd("");
       setSuccess(true);
+      localStorage.setItem("token", response.data.token);
     } catch (err: any) {
       if (typeof err === "object" && "response" in err) {
         const axiosError = err as AxiosError;
