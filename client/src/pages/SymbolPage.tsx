@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import Trading from "../components/Trading";
+import { UserAuth } from "../context/AuthContextProvider";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -41,11 +42,26 @@ interface CompanyQuote {
 }
 
 const SymbolPage: React.FC = () => {
+  const [isAuthenticate, setIsAuthenticate] = useState(false);
+  const navigate = useNavigate();
   const params = useParams();
   const [dailyData, setDailyData] = useState<Data[]>([]);
   const [chartData, setChartData] = useState<number[][]>([]);
   const [companyQuote, setCompanyQuote] = useState<CompanyQuote[]>([]);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const userinfo = await UserAuth();
+      console.log(userinfo);
+      if (userinfo === undefined) {
+        navigate("/login");
+      } else {
+        setIsAuthenticate(true);
+      }
+    };
+    checkAuth();
+  }, []);
 
   useEffect(() => {
     fetchDaily();
