@@ -4,7 +4,7 @@ import axios from "axios";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
 import Trading from "../components/Trading";
-import { UserAuth } from "../context/AuthContextProvider";
+import { UserAuth } from "../functions/UserAuth";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -88,7 +88,7 @@ const SymbolPage: React.FC = () => {
     setLoading(true); // to implement loading component
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response) {
         setDailyData(response.data.historical);
@@ -105,7 +105,7 @@ const SymbolPage: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response) {
         setCompanyQuote(response.data);
@@ -147,7 +147,8 @@ const SymbolPage: React.FC = () => {
 
   return (
     <>
-      {companyQuote &&
+      {isAuthenticate &&
+        companyQuote &&
         companyQuote.map((data, i) => (
           <div key={i} className="company-quote">
             <h3>

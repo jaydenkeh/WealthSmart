@@ -1,9 +1,10 @@
-import { useState, useEffect, SyntheticEvent } from "react";
+import { useState, useEffect, SyntheticEvent, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import FormContainer from "../components/FormContainer";
 import axios, { AxiosError } from "axios";
+import { LoginContext } from "../App";
 
 const LOGIN_URL = "http://localhost:3000/api/login";
 
@@ -13,6 +14,7 @@ const LoginPage: React.FC = () => {
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { setIsLoggedIn } = useContext(LoginContext);
 
   useEffect(() => {
     setErrMsg("");
@@ -34,6 +36,7 @@ const LoginPage: React.FC = () => {
       setEmail("");
       setPwd("");
       setSuccess(true);
+      setIsLoggedIn(true);
       localStorage.setItem("token", response.data.token);
     } catch (err: any) {
       if (typeof err === "object" && "response" in err) {

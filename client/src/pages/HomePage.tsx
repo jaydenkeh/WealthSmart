@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MainDashboard from "../components/MainDashboard";
-import { UserAuth } from "../context/AuthContextProvider";
+import { UserAuth } from "../functions/UserAuth";
 
 const HomePage: React.FC = () => {
   const [isAuthenticate, setIsAuthenticate] = useState(false);
