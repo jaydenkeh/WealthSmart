@@ -1,5 +1,5 @@
 import { useState, useEffect, SyntheticEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import FormContainer from "../components/FormContainer";
@@ -12,6 +12,7 @@ const LoginPage: React.FC = () => {
   const [password, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setErrMsg("");
@@ -51,13 +52,7 @@ const LoginPage: React.FC = () => {
   return (
     <>
       {success ? (
-        <section>
-          <h1>You are logged in!</h1>
-          <br />
-          <p>
-            <a href="#">Go to Home</a>
-          </p>
-        </section>
+        navigate("/")
       ) : (
         <section>
           <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
