@@ -1,13 +1,24 @@
-import React, { useContext } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import { LoginContext } from "../App";
 
-const NavigationBar: React.FC = () => {
-  const { isLoggedIn } = useContext(LoginContext);
+interface LoginProps {
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
+  isLoggedIn: boolean;
+}
+
+const NavigationBar: React.FC<LoginProps> = ({ setIsLoggedIn, isLoggedIn }) => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    navigate("/login");
+  };
 
   return (
     <Navbar bg="light" expand="lg">
@@ -24,7 +35,7 @@ const NavigationBar: React.FC = () => {
               >
                 <Nav.Link href="#action1">My Portfolio</Nav.Link>
                 <Nav.Link href="#action2">Watchlist</Nav.Link>
-                <Nav.Link>Logout</Nav.Link>
+                <Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link>
               </Nav>
               <Form className="d-flex">
                 <Form.Control

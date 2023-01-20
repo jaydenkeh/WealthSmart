@@ -38,20 +38,20 @@ const TopGainersLosers: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
-      const [gainersResponse, losersResponse] = await axios.all([
-        axios.get<Data[]>(
-          `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
-        ),
-        axios.get<Data[]>(
-          `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
-        ),
-      ]);
-      if (gainersResponse && losersResponse) {
-        setGainers(gainersResponse.data);
-        setLosers(losersResponse.data);
-        console.log(gainersResponse.data);
-        console.log(losersResponse.data);
-      }
+      // const [gainersResponse, losersResponse] = await axios.all([
+      //   axios.get<Data[]>(
+      //     `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+      //   ),
+      //   axios.get<Data[]>(
+      //     `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+      //   ),
+      // ]);
+      // if (gainersResponse && losersResponse) {
+      //   setGainers(gainersResponse.data);
+      //   setLosers(losersResponse.data);
+      //   console.log(gainersResponse.data);
+      //   console.log(losersResponse.data);
+      // }
     } finally {
       setLoading(false);
     }

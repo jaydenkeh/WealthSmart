@@ -34,7 +34,7 @@ const TopMarketCap: React.FC = () => {
           isEtf: false,
           isActivelyTrading: true,
           exchange: "NYSE,NASDAQ",
-          apikey: FINANCIAL_MODELING_API_KEY,
+          apikey: FINANCIAL_MODELING_API_KEY_2,
         },
       });
       if (response) {
@@ -43,19 +43,19 @@ const TopMarketCap: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
-      const response = await axios.get<Data[]>(MARKET_CAP_URL, {
-        params: {
-          marketCapMoreThan: 75000000000,
-          isEtf: false,
-          isActivelyTrading: true,
-          exchange: "NYSE,NASDAQ",
-          apikey: FINANCIAL_MODELING_API_KEY_2,
-        },
-      });
-      if (response) {
-        setMarket(response.data);
-        console.log(response.data);
-      }
+      // const response = await axios.get<Data[]>(MARKET_CAP_URL, {
+      //   params: {
+      //     marketCapMoreThan: 75000000000,
+      //     isEtf: false,
+      //     isActivelyTrading: true,
+      //     exchange: "NYSE,NASDAQ",
+      //     apikey: FINANCIAL_MODELING_API_KEY_2,
+      //   },
+      // });
+      // if (response) {
+      //   setMarket(response.data);
+      //   console.log(response.data);
+      // }
     } finally {
       setLoading(false);
     }
