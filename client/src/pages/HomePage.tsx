@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import MainDashboard from "../components/MainDashboard";
 import { UserAuth } from "../functions/UserAuth";
+import { AuthContext } from "../context/AuthContext";
 
 const HomePage: React.FC = () => {
-  const [isAuthenticate, setIsAuthenticate] = useState(false);
+  const { setIsAuthenticated } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,7 +15,7 @@ const HomePage: React.FC = () => {
       if (userinfo === undefined) {
         navigate("/login");
       } else {
-        setIsAuthenticate(true);
+        setIsAuthenticated(true);
       }
     };
     checkAuth();

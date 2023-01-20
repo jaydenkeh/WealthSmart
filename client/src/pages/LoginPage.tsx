@@ -1,22 +1,20 @@
-import { useState, useEffect, SyntheticEvent } from "react";
+import { useState, useEffect, SyntheticEvent, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import FormContainer from "../components/FormContainer";
 import axios, { AxiosError } from "axios";
+import { AuthContext } from "../context/AuthContext";
 
 const LOGIN_URL = "http://localhost:3000/api/login";
 
-interface LoginProps {
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
-}
-
-const LoginPage: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPwd] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     setErrMsg("");
@@ -44,7 +42,7 @@ const LoginPage: React.FC<LoginProps> = ({ setIsLoggedIn }) => {
       setEmail("");
       setPwd("");
       setSuccess(true);
-      setIsLoggedIn(true);
+      setIsAuthenticated(true);
       localStorage.setItem("token", response.data.token);
     } catch (err: any) {
       if (typeof err === "object" && "response" in err) {

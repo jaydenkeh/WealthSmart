@@ -1,29 +1,23 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useContext } from "react";
 import Button from "react-bootstrap/Button";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
+import { AuthContext } from "../context/AuthContext";
 
-interface LoginProps {
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
-  isLoggedIn: boolean;
-}
-
-const NavigationBar: React.FC<LoginProps> = ({ setIsLoggedIn, isLoggedIn }) => {
-  const navigate = useNavigate();
+const NavigationBar: React.FC = () => {
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setIsLoggedIn(false);
-    navigate("/login");
+    setIsAuthenticated(false);
   };
 
   return (
     <Navbar bg="light" expand="lg">
       <Container fluid>
-        {isLoggedIn ? (
+        {isAuthenticated ? (
           <>
             <Navbar.Brand href="/">Wealth Smart</Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
@@ -35,7 +29,9 @@ const NavigationBar: React.FC<LoginProps> = ({ setIsLoggedIn, isLoggedIn }) => {
               >
                 <Nav.Link href="#action1">My Portfolio</Nav.Link>
                 <Nav.Link href="#action2">Watchlist</Nav.Link>
-                <Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link>
+                <Nav.Link href="/login" onClick={() => handleLogout()}>
+                  Logout
+                </Nav.Link>
               </Nav>
               <Form className="d-flex">
                 <Form.Control
