@@ -15,8 +15,30 @@ datasource db {
 }
 
 model User {
-  id              Int     @id @default(autoincrement())
+  id              Int         @id @default(autoincrement())
   userName        String
-  email           String  @unique
+  email           String      @unique
   password        String
+  trades          Trading[]   @relation("Trades")
+  portfolio       Portfolio[] @relation("Portfolio")
+}
+model Trading {
+  id              Int       @id @default(autoincrement())
+  action          String    @default("buy")
+  price           Float
+  symbol          String
+  quantity        Int
+  date            DateTime  @default(now())
+  user            User      @relation("Trades", fields: [userEmail], references: [email])
+  userEmail       String
+}
+
+model Portfolio {
+  id               Int       @id @default(autoincrement())
+  symbol           String
+  quantity         Int
+  purchasePrice    Float
+  currentValue     Float
+  user             User      @relation("Portfolio", fields: [userEmail], references: [email])
+  userEmail        String
 }
