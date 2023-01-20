@@ -10,7 +10,6 @@ export const UserAuth = async () => {
 
   try {
     const response = await axios.get("http://localhost:3000/api/me", config);
-    console.log("Test", response);
     if (response.data) {
       return { ...response.data.data.user };
     } else {
