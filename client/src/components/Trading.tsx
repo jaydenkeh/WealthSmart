@@ -14,6 +14,7 @@ interface FormData {
   quantity: number;
   userEmail: string;
 }
+const TRADING_URL = "http://localhost:3000/api/trading";
 
 const Trading: React.FC<Props> = ({ userEmail, symbol, previousClose }) => {
   const [formData, setFormData] = useState<FormData>({
