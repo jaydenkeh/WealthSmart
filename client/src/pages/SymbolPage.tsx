@@ -48,6 +48,7 @@ const SymbolPage: React.FC = () => {
   const [dailyData, setDailyData] = useState<Data[]>([]);
   const [chartData, setChartData] = useState<number[][]>([]);
   const [companyQuote, setCompanyQuote] = useState<CompanyQuote[]>([]);
+  const [userEmail, setUserEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
@@ -58,6 +59,7 @@ const SymbolPage: React.FC = () => {
       if (userinfo === undefined) {
         navigate("/login");
       } else {
+        setUserEmail(userinfo.email);
         setIsAuthenticated(true);
       }
     };
@@ -181,7 +183,11 @@ const SymbolPage: React.FC = () => {
           </div>
         ))}
       <HighchartsReact highcharts={Highcharts} options={options} />
-      <Trading />
+      <Trading
+        userEmail={userEmail}
+        symbol={companyQuote[0].symbol}
+        previousClose={companyQuote[0].previousClose}
+      />
     </>
   );
 };

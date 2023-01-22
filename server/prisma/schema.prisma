@@ -35,10 +35,9 @@ model Trading {
 
 model Portfolio {
   id               Int       @id @default(autoincrement())
-  symbol           String
+  symbol           String    
   quantity         Int
   purchasePrice    Float
-  currentValue     Float
   user             User      @relation("Portfolio", fields: [userEmail], references: [email])
-  userEmail        String
+  userEmail        String    
 }

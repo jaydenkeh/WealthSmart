@@ -2,19 +2,26 @@ import React, { useState, SyntheticEvent } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
+interface Props {
+  userEmail: string;
+  symbol: string;
+  previousClose: number;
+}
 interface FormData {
   action: "buy" | "sell";
   price: number;
   symbol: string;
   quantity: number;
+  userEmail: string;
 }
 
-const Trading: React.FC = () => {
+const Trading: React.FC<Props> = ({ userEmail, symbol, previousClose }) => {
   const [formData, setFormData] = useState<FormData>({
     action: "buy",
-    price: 0,
-    symbol: "",
+    price: previousClose,
+    symbol: symbol,
     quantity: 0,
+    userEmail: userEmail,
   });
 
   const handleSubmit = (e: SyntheticEvent) => {
