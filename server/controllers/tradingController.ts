@@ -11,12 +11,12 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
     let portfolio = await prisma.portfolio.findFirst({
       where: { userEmail, symbol },
     });
-    // if no portfolio for that symbol for the user, create a new one
+    // if no portfolio exists for the symbol traded for the user, create a new one
     if (!portfolio) {
       portfolio = await prisma.portfolio.create({
         data: {
-          symbol,
-          quantity,
+          symbol: symbol,
+          quantity: quantity,
           purchasePrice: price,
           user: { connect: { email: userEmail } },
         },
@@ -24,46 +24,46 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
     } else {
       if (action === "buy") {
         // Update the existing portfolio for a buy
-        portfolio.quantity += quantity;
-        portfolio.purchasePrice =
-          (portfolio.purchasePrice * (portfolio.quantity - quantity) +
-            price * quantity) /
-          portfolio.quantity;
-      } else {
-        if (portfolio.quantity < quantity) {
-          // If the user is trying to sell more than they own, return an error
-          return res
-            .status(400)
-            .json({ message: "Sell quantity is greater than current holding" });
-        }
-        // Update the existing portfolio for a sell
-        portfolio.quantity -= quantity;
-        portfolio.purchasePrice =
-          (portfolio.purchasePrice * (portfolio.quantity + quantity) -
-            price * quantity) /
-          portfolio.quantity;
+        await prisma.portfolio.update({
+          where: { id: portfolio.id },
+          data: {
+            quantity: portfolio.quantity + quantity,
+            purchasePrice:
+              (portfolio.purchasePrice * portfolio.quantity +
+                price * quantity) /
+              (portfolio.quantity + quantity),
+          },
+        });
       }
-      portfolio = await prisma.portfolio.update({
-        where: { id: portfolio.id },
-        data: {
-          quantity: portfolio.quantity,
-          purchasePrice: portfolio.purchasePrice,
-        },
-      });
+      if (action === "sell" && portfolio.quantity < quantity) {
+        return res
+          .status(400)
+          .json({ message: "You do not have enough shares to sell" });
+      }
+      if (action === "sell" && portfolio.quantity > quantity) {
+        await prisma.portfolio.update({
+          where: { id: portfolio.id },
+          data: {
+            quantity: portfolio.quantity - quantity,
+            purchasePrice:
+              (portfolio.purchasePrice * portfolio.quantity -
+                price * quantity) /
+              (portfolio.quantity - quantity),
+          },
+        });
+      }
     }
     // Create the trade for records
     const trade = await prisma.trading.create({
       data: {
-        action,
-        price,
-        symbol,
-        quantity,
+        action: action,
+        price: price,
+        symbol: symbol,
+        quantity: quantity,
         user: { connect: { email: userEmail } },
       },
     });
-    res
-      .status(201)
-      .json({ message: "Trade created successfully", trade, portfolio });
+    res.status(201).json({ message: "Trade successful", trade, portfolio });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   } finally {

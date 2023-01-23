@@ -16,7 +16,7 @@ app.use(cors());
 app.use("/api/signup", signupRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/me", checkAuthRouter);
-app.use("/ap/trading", tradingRouter);
+app.use("/api/trading", tradingRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
