@@ -14,6 +14,7 @@ checkAuthRouter.get("/", verifyJWT, async (req: Request, res: Response) => {
     return res.json({
       data: {
         user: {
+          userName: user.userName,
           email: user.email,
         },
       },
