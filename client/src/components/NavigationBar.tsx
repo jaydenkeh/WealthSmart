@@ -27,7 +27,7 @@ const NavigationBar: React.FC = () => {
                 style={{ maxHeight: "100px" }}
                 navbarScroll
               >
-                <Nav.Link href="/portfolio">My Portfolio</Nav.Link>
+                <Nav.Link href="/portfolio">Investment Portfolio</Nav.Link>
                 <Nav.Link href="#action2">Watchlist</Nav.Link>
                 <Nav.Link href="/login" onClick={() => handleLogout()}>
                   Logout

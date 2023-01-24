@@ -73,7 +73,6 @@ const SymbolPage: React.FC = () => {
   useEffect(() => {
     const checkAuth = async () => {
       const userinfo = await UserAuth();
-      console.log(userinfo);
       if (userinfo === undefined) {
         navigate("/login");
       } else {
@@ -265,7 +264,7 @@ const SymbolPage: React.FC = () => {
         <Form.Group className="mb-3" controlId="price">
           <Form.Label>Price:</Form.Label>
           <Form.Control
-            type="number"
+            type="text"
             name="price"
             value={tradingData.price}
             onChange={handleChange}
@@ -275,7 +274,7 @@ const SymbolPage: React.FC = () => {
         <Form.Group className="mb-3" controlId="quantity">
           <Form.Label>Quantity:</Form.Label>
           <Form.Control
-            type="number"
+            type="text"
             name="quantity"
             value={tradingData.quantity}
             onChange={handleChange}
