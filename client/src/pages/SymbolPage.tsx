@@ -174,7 +174,7 @@ const SymbolPage: React.FC = () => {
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const { name, value } = e.currentTarget;
-    setTradingData({ ...tradingData, [name]: parseFloat(value) });
+    setTradingData({ ...tradingData, [name]: Number(value) });
     console.log(tradingData);
   };
 
@@ -245,7 +245,7 @@ const SymbolPage: React.FC = () => {
             </div>
           </div>
         ))}
-      <HighchartsReact highcharts={Highcharts} options={options} />
+      {/* <HighchartsReact highcharts={Highcharts} options={options} /> */}
       <br />
       {message}
       <Form onSubmit={handleSubmit}>
@@ -264,7 +264,9 @@ const SymbolPage: React.FC = () => {
         <Form.Group className="mb-3" controlId="price">
           <Form.Label>Price:</Form.Label>
           <Form.Control
-            type="text"
+            type="number"
+            step=".01"
+            min="0"
             name="price"
             value={tradingData.price}
             onChange={handleChange}
@@ -274,9 +276,10 @@ const SymbolPage: React.FC = () => {
         <Form.Group className="mb-3" controlId="quantity">
           <Form.Label>Quantity:</Form.Label>
           <Form.Control
-            type="text"
+            type="number"
+            min="0"
             name="quantity"
-            value={tradingData.quantity}
+            placeholder="Min Unit 1"
             onChange={handleChange}
           />
         </Form.Group>
