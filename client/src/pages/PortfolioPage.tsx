@@ -109,10 +109,34 @@ const PortfolioPage: React.FC = () => {
     <>
       <div className="user-portfolio">
         <h3>{userData.userName}'s Portfolio</h3>
-        <p>Total Assets USD: ${totalAssets}</p>
-        <p>Total Securities Value: ${securitiesValue}</p>
-        <p>Cash Balance: ${cashBalance}</p>
-        <p>Profit and Loss: ${profitLoss}</p>
+        <p>
+          Total Assets USD: $
+          {totalAssets
+            .toFixed(2)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </p>
+        <p>
+          Total Securities Value: $
+          {securitiesValue
+            .toFixed(2)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </p>
+        <p>
+          Cash Balance: $
+          {cashBalance
+            .toFixed(2)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </p>
+        <p>
+          Profit and Loss: $
+          {profitLoss
+            .toFixed(2)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </p>
         <h4>Current securities holdings</h4>
         <Table striped bordered hover>
           <thead>
@@ -127,14 +151,20 @@ const PortfolioPage: React.FC = () => {
               portfolioData.map((portfolio, index) => (
                 <tr key={index}>
                   <td>
-                    <span className="portfolio-symbol-button"
+                    <span
+                      className="portfolio-symbol-button"
                       onClick={() => navigate(`/symbol/${portfolio.symbol}`)}
                     >
                       {portfolio.symbol}
                     </span>
                   </td>
                   <td>{portfolio.quantity}</td>
-                  <td>{portfolio.purchasePrice}</td>
+                  <td>
+                    {portfolio.purchasePrice
+                      .toFixed(2)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </td>
                 </tr>
               ))
             ) : (
