@@ -21,6 +21,7 @@ model User {
   password        String
   trades          Trading[]   @relation("Trades")
   portfolio       Portfolio[] @relation("Portfolio")
+  watchlist       Watchlist[] @relation("Watchlist")
 }
 model Trading {
   id              Int       @id @default(autoincrement())
@@ -40,4 +41,16 @@ model Portfolio {
   purchasePrice    Float
   user             User      @relation("Portfolio", fields: [userEmail], references: [email])
   userEmail        String    
+}
+
+model Watchlist {
+  id               Int      @id @default(autoincrement())
+  symbol           String
+  companyName      String
+  price            Float
+  priceChange      Float
+  percentChange    Float
+  volume           Int
+  user             User     @relation("Watchlist", fields: [userEmail], references: [email])
+  userEmail        String  
 }
