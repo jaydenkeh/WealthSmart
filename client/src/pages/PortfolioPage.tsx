@@ -36,6 +36,7 @@ const PortfolioPage: React.FC = () => {
   const [portfolioData, setPortfolioData] = useState<PortfolioData[] | null>(
     null
   );
+  const [quotes, setQuotes] = useState<Quote[]>([]);
   const [totalAssets, setTotalAssets] = useState<number>(100000);
   const [securitiesValue, setSecuritiesValue] = useState<number>(0);
   const [cashBalance, setCashBalance] = useState<number>(0);
@@ -84,6 +85,8 @@ const PortfolioPage: React.FC = () => {
           const response = await axios.get<Quote[]>(
             `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
           );
+          console.log(response.data);
+          setQuotes(response.data);
           response.data.forEach((quote) => {
             portfolioData.forEach((portfolio) => {
               if (portfolio.symbol === quote.symbol) {
@@ -110,28 +113,28 @@ const PortfolioPage: React.FC = () => {
       <div className="user-portfolio">
         <h3>{userData.userName}'s Portfolio</h3>
         <p>
-          Total Assets USD: $
+          Total Assets (USD): $
           {totalAssets
             .toFixed(2)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </p>
         <p>
-          Total Securities Value: $
+          Total Securities Value (USD): $
           {securitiesValue
             .toFixed(2)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </p>
         <p>
-          Cash Balance: $
+          Cash Balance (USD): $
           {cashBalance
             .toFixed(2)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </p>
         <p>
-          Profit and Loss: $
+          Profit and Loss (USD): $
           {profitLoss
             .toFixed(2)
             .toString()
@@ -142,34 +145,66 @@ const PortfolioPage: React.FC = () => {
           <thead>
             <tr>
               <th>Symbol</th>
-              <th>Quantity</th>
-              <th>Purchase Price</th>
+              <th>Position</th>
+              <th>Purchase Price (USD)</th>
+              <th>Security Value (USD)</th>
+              <th>Profit/Loss (USD)</th>
             </tr>
           </thead>
           <tbody>
             {isAuthenticated && portfolioData ? (
-              portfolioData.map((portfolio, index) => (
-                <tr key={index}>
-                  <td>
-                    <span
-                      className="portfolio-symbol-button"
-                      onClick={() => navigate(`/symbol/${portfolio.symbol}`)}
-                    >
-                      {portfolio.symbol}
-                    </span>
-                  </td>
-                  <td>{portfolio.quantity}</td>
-                  <td>
-                    {portfolio.purchasePrice
-                      .toFixed(2)
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </td>
-                </tr>
-              ))
+              portfolioData.map((portfolio, index) => {
+                let securityValue =
+                  portfolio.purchasePrice * portfolio.quantity;
+                let profitLoss = 0;
+                if (quotes && quotes.length > 0) {
+                  let currentQuote = quotes.find(
+                    (quote) => quote.symbol === portfolio.symbol
+                  );
+                  if (currentQuote) {
+                    profitLoss =
+                      (currentQuote.price - portfolio.purchasePrice) *
+                      portfolio.quantity;
+                  }
+                }
+                return (
+                  <tr key={index}>
+                    <td>
+                      <span
+                        className="portfolio-symbol-button"
+                        onClick={() => navigate(`/symbol/${portfolio.symbol}`)}
+                      >
+                        {portfolio.symbol}
+                      </span>
+                    </td>
+                    <td>{portfolio.quantity}</td>
+                    <td>
+                      $
+                      {portfolio.purchasePrice
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
+                    <td>
+                      $
+                      {securityValue
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
+                    <td>
+                      $
+                      {profitLoss
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
+                  </tr>
+                );
+              })
             ) : (
               <tr>
-                <td colSpan={3}>Loading...</td>
+                <td colSpan={5}>Loading...</td>
               </tr>
             )}
           </tbody>
