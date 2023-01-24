@@ -13,6 +13,7 @@ const FINANCIAL_MODELING_API_KEY = import.meta.env
 const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
 const TRADING_URL = "http://localhost:3000/api/trading";
+const WATCHLIST_URL = "http://localhost:3000/api/watchlist";
 
 interface Data {
   adjClose: number;
@@ -126,6 +127,7 @@ const SymbolPage: React.FC = () => {
         `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response.data) {
+        console.log(response.data);
         setCompanyQuote(response.data);
         setTradingData({
           ...tradingData,
@@ -133,6 +135,26 @@ const SymbolPage: React.FC = () => {
           price: response.data[0].previousClose,
         });
       }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  console.log(companyQuote);
+
+  const handleAddToWatchlist = async () => {
+    try {
+      await axios.post(WATCHLIST_URL, {
+        userEmail: userEmail,
+        symbol: companyQuote[0].symbol,
+        companyName: companyQuote[0].name,
+        price: companyQuote[0].price,
+        priceChange: companyQuote[0].change,
+        percentChange: companyQuote[0].changesPercentage,
+        volume: companyQuote[0].volume,
+      });
     } catch (err) {
       console.log(err);
     } finally {
