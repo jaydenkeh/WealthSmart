@@ -8,6 +8,7 @@ import SignupPage from "./pages/SignupPage";
 import HomePage from "./pages/HomePage";
 import SymbolPage from "./pages/SymbolPage";
 import PortfolioPage from "./pages/PortfolioPage";
+import WatchlistPage from "./pages/WatchlistPage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -25,6 +26,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/symbol/:symbol" element={<SymbolPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
+          <Route path="/watchlist" element={<WatchlistPage />} />
           <Route
             path="*"
             element={<p>The page you are searching is not found</p>}
