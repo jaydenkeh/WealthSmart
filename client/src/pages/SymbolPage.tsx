@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Highcharts from "highcharts/highstock";
 import HighchartsReact from "highcharts-react-official";
+import { ClipLoader } from "react-spinners";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { UserAuth } from "../functions/UserAuth";
@@ -12,8 +13,10 @@ const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
 const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
+const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_3;
 const TRADING_URL = "http://localhost:3000/api/trading";
-const WATCHLIST_URL = "http://localhost:3000/api/watchlist";
+const WATCHLIST_URL = "http://localhost:3300/api/watchlist"; // Note: after previous prisma migration in the backend 3000 Port is not working therefore using 3300
 
 interface Data {
   adjClose: number;
@@ -67,7 +70,8 @@ const SymbolPage: React.FC = () => {
     userEmail: "",
   });
   const [userEmail, setUserEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [watchlistLoading, setWatchlistLoading] = useState(false);
+  const [orderLoading, setOrderLoading] = useState(false);
   const [message, setMessage] = useState("");
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
@@ -105,29 +109,24 @@ const SymbolPage: React.FC = () => {
   }, [dailyData]);
 
   const fetchDaily = async () => {
-    setLoading(true); // to implement loading component
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
       );
       if (response) {
         setDailyData(response.data.historical);
       }
     } catch (err) {
       console.log(err);
-    } finally {
-      setLoading(false);
     }
   };
 
   const fetchCompanyQuote = async () => {
-    setLoading(true);
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
       );
       if (response.data) {
-        console.log(response.data);
         setCompanyQuote(response.data);
         setTradingData({
           ...tradingData,
@@ -137,33 +136,39 @@ const SymbolPage: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
-    } finally {
-      setLoading(false);
     }
   };
 
-  console.log(companyQuote);
-
-  const handleAddToWatchlist = async () => {
+  const handleAddToWatchlist = async (e: SyntheticEvent) => {
+    e.preventDefault();
+    setWatchlistLoading(true);
     try {
-      await axios.post(WATCHLIST_URL, {
-        userEmail: userEmail,
-        symbol: companyQuote[0].symbol,
-        companyName: companyQuote[0].name,
-        price: companyQuote[0].price,
-        priceChange: companyQuote[0].change,
-        percentChange: companyQuote[0].changesPercentage,
-        volume: companyQuote[0].volume,
-      });
+      const response = await axios.post(
+        WATCHLIST_URL,
+        {
+          userEmail: userEmail,
+          symbol: companyQuote[0].symbol,
+          companyName: companyQuote[0].name,
+          price: companyQuote[0].price,
+          priceChange: companyQuote[0].change,
+          percentChange: companyQuote[0].changesPercentage,
+          volume: companyQuote[0].volume,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      console.log(response);
     } catch (err) {
       console.log(err);
     } finally {
-      setLoading(false);
+      setWatchlistLoading(false);
     }
   };
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    setOrderLoading(true);
     try {
       const response = await axios.post(
         TRADING_URL,
@@ -191,6 +196,8 @@ const SymbolPage: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setOrderLoading(false);
     }
   };
 
@@ -234,39 +241,38 @@ const SymbolPage: React.FC = () => {
 
   return (
     <>
-      {isAuthenticated &&
-        companyQuote &&
-        companyQuote.map((data, i) => (
-          <div key={i} className="company-quote">
-            <h3>
-              {data.name} - {data.symbol}
-            </h3>
-            <Button variant="primary">Add to Watchlist</Button>
-            <p>
-              Price: {data.price}
-              <br />
-              Change: {data.change} ({data.changesPercentage})
-            </p>
-            <div className="company-data-container">
-              <p>
-                High: {data.dayHigh}
-                <br />
-                Low: {data.dayLow}
-              </p>
-              <p>
-                52 weeks High: {data.yearHigh}
-                <br />
-                52 weeks Low: {data.yearLow}
-              </p>
-              <p>
-                Open: {data.open}
-                <br />
-                Previous Close: {data.previousClose}
-              </p>
-              <p>Volume: {data.volume}</p>
-            </div>
+      {isAuthenticated && companyQuote ? (
+        <div className="company-quote">
+          <h3>
+            {companyQuote[0]?.name} - {companyQuote[0]?.symbol}
+          </h3>
+          <Button
+            variant="primary"
+            disabled={watchlistLoading}
+            onClick={handleAddToWatchlist}
+          >
+            {watchlistLoading ? (
+              <ClipLoader size={20} color="#123abc" />
+            ) : (
+              "Add to Watchlist"
+            )}
+          </Button>
+          <p>Price: {companyQuote[0]?.price}</p>
+          <p>
+            Change: {companyQuote[0]?.change} (
+            {companyQuote[0]?.changesPercentage}%)
+          </p>
+          <div className="company-data-container">
+            <p>Day High: {companyQuote[0]?.dayHigh}</p>
+            <p>Day Low: {companyQuote[0]?.dayLow}</p>
+            <p>52 Weeks High: {companyQuote[0]?.yearHigh}</p>
+            <p>52 Weeks Low: {companyQuote[0]?.yearLow}</p>
+            <p>Open: {companyQuote[0]?.open}</p>
+            <p>Previous Close: {companyQuote[0]?.previousClose}</p>
+            <p>Volume: {companyQuote[0]?.volume}</p>
           </div>
-        ))}
+        </div>
+      ) : null}
       {/* <HighchartsReact highcharts={Highcharts} options={options} /> */}
       <br />
       {message}
@@ -305,8 +311,12 @@ const SymbolPage: React.FC = () => {
             onChange={handleChange}
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Submit
+        <Button variant="primary" type="submit" disabled={orderLoading}>
+          {orderLoading ? (
+            <ClipLoader size={20} color="#123abc" />
+          ) : (
+            "Place Order"
+          )}
         </Button>
       </Form>
     </>
