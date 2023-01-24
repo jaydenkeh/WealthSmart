@@ -73,8 +73,8 @@ const TopMarketCap: React.FC = () => {
           <tr>
             <th>Symbol</th>
             <th>Name</th>
-            <th>Market cap</th>
-            <th>Price</th>
+            <th>Market cap (USD)</th>
+            <th>Price (USD)</th>
             <th>Volume</th>
             <th>Exchange</th>
             <th>Industry</th>
@@ -95,9 +95,17 @@ const TopMarketCap: React.FC = () => {
                     </span>
                   </td>
                   <td>{data?.companyName}</td>
-                  <td>{data?.marketCap}</td>
+                  <td>
+                    {data?.marketCap
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </td>
                   <td>{data?.price}</td>
-                  <td>{data?.volume}</td>
+                  <td>
+                    {data?.volume
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </td>
                   <td>{data?.exchangeShortName}</td>
                   <td>{data?.industry}</td>
                 </tr>

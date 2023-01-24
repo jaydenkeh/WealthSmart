@@ -174,13 +174,13 @@ const PortfolioPage: React.FC = () => {
                         className="portfolio-symbol-button"
                         onClick={() => navigate(`/symbol/${portfolio.symbol}`)}
                       >
-                        {portfolio.symbol}
+                        {portfolio?.symbol}
                       </span>
                     </td>
-                    <td>{portfolio.quantity}</td>
+                    <td>{portfolio?.quantity}</td>
                     <td>
                       $
-                      {portfolio.purchasePrice
+                      {portfolio?.purchasePrice
                         .toFixed(2)
                         .toString()
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
