@@ -46,7 +46,8 @@ section {
   margin-bottom: 0.5rem;
 }
 
-.symbol-button {
+.symbol-button,
+.portfolio-symbol-button {
   cursor: pointer;
   padding: 0.5em 1em;
   background: #2196f3;
@@ -55,7 +56,9 @@ section {
   transition: background 250ms ease-in-out, transform 150ms ease;
   text-align: center;
 }
-.symbol-button:hover {
+
+.symbol-button:hover,
+.portfolio-symbol-button:hover {
   background: #105166;
 }
 

@@ -126,7 +126,13 @@ const PortfolioPage: React.FC = () => {
             {isAuthenticated && portfolioData ? (
               portfolioData.map((portfolio, index) => (
                 <tr key={index}>
-                  <td>{portfolio.symbol}</td>
+                  <td>
+                    <span className="portfolio-symbol-button"
+                      onClick={() => navigate(`/symbol/${portfolio.symbol}`)}
+                    >
+                      {portfolio.symbol}
+                    </span>
+                  </td>
                   <td>{portfolio.quantity}</td>
                   <td>{portfolio.purchasePrice}</td>
                 </tr>
