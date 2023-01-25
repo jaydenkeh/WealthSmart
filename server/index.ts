@@ -8,6 +8,7 @@ import { checkAuthRouter } from "./controllers/checkAuthController";
 import { tradingRouter } from "./controllers/tradingController";
 import { portfolioRouter } from "./controllers/portfolioController";
 import { watchlistRouter } from "./controllers/watchlistController";
+import { accountValueRouter } from "./controllers/accountValueController";
 
 const PORT = process.env.PORT;
 const app = express();
@@ -21,6 +22,7 @@ app.use("/api/me", checkAuthRouter);
 app.use("/api/trading", tradingRouter);
 app.use("/api/portfolio", portfolioRouter);
 app.use("/api/watchlist", watchlistRouter);
+app.use("/api/accountvalue", accountValueRouter);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
