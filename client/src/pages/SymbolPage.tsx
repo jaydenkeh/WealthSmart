@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useContext, SyntheticEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import Highcharts from "highcharts/highstock";
-import HighchartsReact from "highcharts-react-official";
 import { ClipLoader } from "react-spinners";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
+import Chart from "../components/Chart";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -22,21 +21,6 @@ interface UserData {
   userName: string;
   email: string;
 }
-interface Data {
-  adjClose: number;
-  change: number;
-  changeOverTime: number;
-  changePercent: number;
-  close: number;
-  date: string;
-  high: number;
-  label: string;
-  low: number;
-  open: number;
-  unadjustedVolume: number;
-  volume: number;
-}
-
 interface CompanyQuote {
   name: string;
   symbol: string;
@@ -68,8 +52,6 @@ const SymbolPage: React.FC = () => {
     email: "",
   });
   const params = useParams();
-  const [dailyData, setDailyData] = useState<Data[]>([]);
-  const [chartData, setChartData] = useState<number[][]>([]);
   const [companyQuote, setCompanyQuote] = useState<CompanyQuote[]>([]);
   const [tradingData, setTradingData] = useState<TradingData>({
     action: "buy",
@@ -98,42 +80,13 @@ const SymbolPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    fetchDaily();
     fetchCompanyQuote();
   }, [params.symbol]);
-
-  useEffect(() => {
-    if (Array.isArray(dailyData)) {
-      let data = dailyData.map((item: Data) => {
-        return [
-          Date.parse(item.date),
-          item.open,
-          item.high,
-          item.low,
-          item.close,
-        ];
-      });
-      setChartData(data);
-    }
-  }, [dailyData]);
-
-  const fetchDaily = async () => {
-    try {
-      const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
-      );
-      if (response) {
-        setDailyData(response.data.historical);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
 
   const fetchCompanyQuote = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
       );
       if (response.data) {
         setCompanyQuote(response.data);
@@ -251,33 +204,6 @@ const SymbolPage: React.FC = () => {
     setTradingData({ ...tradingData, [name]: value });
   };
 
-  const options = {
-    chart: {
-      type: "candlestick",
-      zoomType: "x",
-    },
-    title: {
-      text: "Daily Candlestick Chart",
-    },
-    xAxis: {
-      type: "datetime",
-    },
-    yAxis: {
-      title: {
-        text: "Price",
-      },
-    },
-    series: [
-      {
-        type: "candlestick",
-        name: "Daily Candlesticks",
-        data: chartData,
-        pointWidth: 16,
-        turboThreshold: 0,
-      },
-    ],
-  };
-
   return (
     <>
       {isAuthenticated && companyQuote ? (
@@ -318,7 +244,7 @@ const SymbolPage: React.FC = () => {
           </div>
         </div>
       ) : null}
-      {/* <HighchartsReact highcharts={Highcharts} options={options} /> */}
+      <Chart symbol={companyQuote[0]?.symbol} name={companyQuote[0]?.name} />
       <br />
       {message}
       <Form onSubmit={handleOrder}>
