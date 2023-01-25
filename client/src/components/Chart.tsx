@@ -92,6 +92,7 @@ const Chart: React.FC<ChartProps> = ({ symbol, name }) => {
         upColor: "green",
         color: "red",
         pointPadding: 1,
+        gapSize: 0,
       },
     },
     series: [

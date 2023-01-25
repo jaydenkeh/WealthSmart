@@ -9,6 +9,8 @@ const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
 const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
+const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_3;
 interface UserData {
   userName: string;
   email: string;
@@ -83,7 +85,7 @@ const PortfolioPage: React.FC = () => {
       const fetchQuotes = async () => {
         try {
           const response = await axios.get<Quote[]>(
-            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
+            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
           );
           console.log(response.data);
           setQuotes(response.data);

@@ -175,7 +175,6 @@ const SymbolPage: React.FC = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(response?.data);
       if (response.status === 201) {
         setTradingData({
           action: "buy",
@@ -186,8 +185,11 @@ const SymbolPage: React.FC = () => {
         });
         setMessage("Trade executed successfully");
       }
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
+      if (err.response.status === 400) {
+        setMessage(err.response.data.message);
+      }
     } finally {
       setOrderLoading(false);
     }

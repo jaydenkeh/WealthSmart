@@ -40,16 +40,17 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
           .status(400)
           .json({ message: "You do not have enough shares to sell" });
       }
-      if (action === "sell" && portfolio.quantity > quantity) {
+      if (action === "sell" && portfolio.quantity >= quantity) {
         await prisma.portfolio.update({
           where: { id: portfolio.id },
           data: {
             quantity: portfolio.quantity - quantity,
-            purchasePrice:
-              (portfolio.purchasePrice * portfolio.quantity -
-                price * quantity) /
-              (portfolio.quantity - quantity),
           },
+        });
+      }
+      if (action === "sell" && portfolio.quantity === quantity) {
+        await prisma.portfolio.delete({
+          where: { id: portfolio.id },
         });
       }
     }
