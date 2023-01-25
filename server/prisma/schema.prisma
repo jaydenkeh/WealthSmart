@@ -15,13 +15,14 @@ datasource db {
 }
 
 model User {
-  id              Int         @id @default(autoincrement())
+  id              Int             @id @default(autoincrement())
   userName        String
-  email           String      @unique
+  email           String          @unique
   password        String
-  trades          Trading[]   @relation("Trades")
-  portfolio       Portfolio[] @relation("Portfolio")
-  watchlist       Watchlist[] @relation("Watchlist")
+  trades          Trading[]       @relation("Trades")
+  portfolio       Portfolio[]     @relation("Portfolio")
+  watchlist       Watchlist[]     @relation("Watchlist")
+  accountValue    AccountValue[]  @relation("AccountValue")
 }
 model Trading {
   id              Int       @id @default(autoincrement())
@@ -41,6 +42,16 @@ model Portfolio {
   purchasePrice    Float
   user             User      @relation("Portfolio", fields: [userEmail], references: [email])
   userEmail        String    
+}
+
+model AccountValue {
+  id                   Int   @id @default(autoincrement())
+  totalAssets          Float
+  totalSecuritiesValue Float
+  cashBalance          Float
+  totalProfitLoss      Float
+  user                 User @relation("AccountValue",fields: [userEmail], references: [email])
+  userEmail            String
 }
 
 model Watchlist {
