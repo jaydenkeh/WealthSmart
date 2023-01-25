@@ -11,6 +11,8 @@ const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
 const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_3;
+const FINANCIAL_MODELING_API_KEY_4 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_4;
 interface UserData {
   userName: string;
   email: string;
@@ -21,6 +23,13 @@ interface PortfolioData {
   symbol: string;
   quantity: number;
   purchasePrice: number;
+  userEmail: string;
+}
+interface AccountValueData {
+  totalAssets: number;
+  totalSecuritiesValue: number;
+  cashBalance: number;
+  totalProfitLoss: number;
   userEmail: string;
 }
 interface Quote {
@@ -38,11 +47,10 @@ const PortfolioPage: React.FC = () => {
   const [portfolioData, setPortfolioData] = useState<PortfolioData[] | null>(
     null
   );
+  const [accountValueData, setAccountValueData] =
+    useState<AccountValueData | null>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [totalAssets, setTotalAssets] = useState<number>(100000);
-  const [securitiesValue, setSecuritiesValue] = useState<number>(0);
-  const [cashBalance, setCashBalance] = useState<number>(0);
-  const [profitLoss, setProfitLoss] = useState<number>(0);
+  const [totalProfitLoss, setTotalProfitLoss] = useState(0);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -59,49 +67,57 @@ const PortfolioPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    const fetchPortfolio = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/api/portfolio/${userData.email}`
-        );
-        console.log(response.data.portfolio);
-        setPortfolioData(response.data.portfolio);
-      } catch (err) {
-        console.log(err);
-      }
-    };
     fetchPortfolio();
+    fetchUserAccountValue();
   }, [userData]);
 
+  const fetchPortfolio = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/portfolio/${userData.email}`
+      );
+      console.log(response.data.portfolio);
+      setPortfolioData(response.data.portfolio);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchUserAccountValue = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/accountvalue/${userData.email}`
+      );
+      setAccountValueData(response.data.accountValue);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // function map out the existing portfolio holding of the user and show whether it is a profit/loss trade
   useEffect(() => {
     if (portfolioData) {
       const portfolioSymbols = portfolioData.map(
         (portfolio) => portfolio.symbol
       );
       const symbols = portfolioSymbols.join(",");
-      let securitiesValue = 0;
-      let profitLoss = 0;
-      let totalAssets = 100000;
       const fetchQuotes = async () => {
         try {
           const response = await axios.get<Quote[]>(
-            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
+            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
           );
           console.log(response.data);
           setQuotes(response.data);
-          response.data.forEach((quote) => {
-            portfolioData.forEach((portfolio) => {
-              if (portfolio.symbol === quote.symbol) {
-                securitiesValue += portfolio.purchasePrice * portfolio.quantity;
-                profitLoss +=
-                  (quote.price - portfolio.purchasePrice) * portfolio.quantity;
-              }
-            });
+          let totalProfitLoss = 0;
+          portfolioData.forEach((portfolio) => {
+            const quote = quotes.find((q) => q.symbol === portfolio.symbol);
+            if (quote) {
+              const profitLoss =
+                (quote.price - portfolio.purchasePrice) * portfolio.quantity;
+              totalProfitLoss += profitLoss;
+            }
           });
-          setSecuritiesValue(securitiesValue);
-          setCashBalance(totalAssets - securitiesValue);
-          setProfitLoss(profitLoss);
-          setTotalAssets(totalAssets + profitLoss);
+          setTotalProfitLoss(totalProfitLoss);
         } catch (err) {
           console.log(err);
         }
@@ -116,28 +132,28 @@ const PortfolioPage: React.FC = () => {
         <h3>{userData.userName}'s Portfolio</h3>
         <p>
           Total Assets (USD): $
-          {totalAssets
+          {accountValueData?.totalAssets
             .toFixed(2)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </p>
         <p>
           Total Securities Value (USD): $
-          {securitiesValue
+          {accountValueData?.totalSecuritiesValue
             .toFixed(2)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </p>
         <p>
           Cash Balance (USD): $
-          {cashBalance
+          {accountValueData?.cashBalance
             .toFixed(2)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </p>
         <p>
           Profit and Loss (USD): $
-          {profitLoss
+          {totalProfitLoss
             .toFixed(2)
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}

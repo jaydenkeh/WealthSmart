@@ -14,6 +14,8 @@ const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
 const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_3;
+const FINANCIAL_MODELING_API_KEY_4 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_4;
 const TRADING_URL = "http://localhost:3000/api/trading";
 const WATCHLIST_URL = "http://localhost:3000/api/watchlist";
 
@@ -34,6 +36,13 @@ interface CompanyQuote {
   volume: number;
   open: number;
   previousClose: number;
+}
+interface AccountValueData {
+  totalAssets: number;
+  totalSecuritiesValue: number;
+  cashBalance: number;
+  totalProfitLoss: number;
+  userEmail: string;
 }
 
 interface TradingData {
@@ -60,6 +69,8 @@ const SymbolPage: React.FC = () => {
     quantity: 0,
     userEmail: "",
   });
+  const [accountValueData, setAccountValueData] =
+    useState<AccountValueData | null>(null);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
   const [isAddedToWatchlist, setIsAddedToWatchlist] = useState(false);
@@ -81,12 +92,13 @@ const SymbolPage: React.FC = () => {
 
   useEffect(() => {
     fetchCompanyQuote();
-  }, [params.symbol]);
+    fetchUserAccountValue();
+  }, [userData]);
 
   const fetchCompanyQuote = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_4}`
       );
       if (response.data) {
         setCompanyQuote(response.data);
@@ -96,6 +108,18 @@ const SymbolPage: React.FC = () => {
           price: response.data[0].previousClose,
         });
       }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchUserAccountValue = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/accountvalue/${userData.email}`
+      );
+      setAccountValueData(response.data.accountValue);
+      console.log(accountValueData);
     } catch (err) {
       console.log(err);
     }
@@ -161,22 +185,59 @@ const SymbolPage: React.FC = () => {
   const handleOrder = async (e: SyntheticEvent) => {
     e.preventDefault();
     setOrderLoading(true);
+    fetchUserAccountValue();
     try {
-      // check if its a buy or sell; if sell, check with current closing price and see if its a profit or loss
-      const response = await axios.post(
-        TRADING_URL,
-        {
-          action: tradingData.action,
-          price: tradingData.price,
-          symbol: tradingData.symbol,
-          quantity: tradingData.quantity,
-          userEmail: userData.email,
-        },
-        {
-          headers: { "Content-Type": "application/json" },
+      const action = tradingData.action;
+      const price = tradingData.price;
+      const symbol = tradingData.symbol;
+      const quantity = tradingData.quantity;
+      const userEmail = userData.email;
+      const tradeResponse = await axios.post(TRADING_URL, {
+        action,
+        price,
+        symbol,
+        quantity,
+        userEmail,
+      });
+      if (tradeResponse.status === 201) {
+        // update account value
+        let accountValueResponse;
+        if (action === "buy" && accountValueData) {
+          const totalSecurityValue = price * quantity;
+          accountValueResponse = await axios.put(
+            `http://localhost:3000/api/accountvalue/${userData.email}/`,
+            {
+              userEmail,
+              totalAssets: accountValueData.totalAssets,
+              totalSecuritiesValue:
+                accountValueData.totalSecuritiesValue + totalSecurityValue,
+              cashBalance: accountValueData.cashBalance - totalSecurityValue,
+              totalProfitLoss: accountValueData.totalProfitLoss,
+            }
+          );
         }
-      );
-      if (response.status === 201) {
+        // if its a sell order, check with current closing price and see if its a profit or loss
+        if (action === "sell" && accountValueData) {
+          const currentPrice = companyQuote[0].previousClose;
+          let profitLoss = 0;
+          if (currentPrice > price) {
+            profitLoss = (currentPrice - price) * quantity;
+          } else {
+            profitLoss = -((price - currentPrice) * quantity);
+          }
+          accountValueResponse = await axios.put(
+            `http://localhost:3000/api/accountvalue/${userData.email}/`,
+            {
+              userEmail,
+              totalAssets: accountValueData.totalAssets + profitLoss,
+              totalSecuritiesValue:
+                accountValueData.totalSecuritiesValue - quantity * price,
+              cashBalance:
+                accountValueData.cashBalance + quantity * currentPrice,
+              totalProfitLoss: accountValueData.totalProfitLoss + profitLoss,
+            }
+          );
+        }
         setTradingData({
           action: "buy",
           price: companyQuote[0].previousClose,
