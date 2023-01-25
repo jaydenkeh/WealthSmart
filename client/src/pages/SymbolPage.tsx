@@ -162,6 +162,7 @@ const SymbolPage: React.FC = () => {
     e.preventDefault();
     setOrderLoading(true);
     try {
+      // check if its a buy or sell; if sell, check with current closing price and see if its a profit or loss
       const response = await axios.post(
         TRADING_URL,
         {

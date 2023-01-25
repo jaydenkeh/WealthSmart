@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
@@ -44,6 +45,7 @@ const WatchlistPage: React.FC = () => {
     null
   );
   const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -83,7 +85,7 @@ const WatchlistPage: React.FC = () => {
       const fetchQuotes = async () => {
         try {
           const response = await axios.get<Quote[]>(
-            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
           );
           console.log(response.data);
           setQuotes(response.data);
@@ -96,6 +98,7 @@ const WatchlistPage: React.FC = () => {
   }, [watchlistData]);
 
   const handleDelete = async (symbol: string) => {
+    setDeleteLoading(true);
     try {
       const response = await axios.delete(
         `http://localhost:3000/api/watchlist/${userData.email}/${symbol}`
@@ -109,6 +112,8 @@ const WatchlistPage: React.FC = () => {
       }
     } catch (err) {
       console.log(err);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -128,7 +133,7 @@ const WatchlistPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {isAuthenticated && watchlistData ? (
+          {isAuthenticated ? (
             quotes.map((watchlist, index) => (
               <tr key={index}>
                 <td>
@@ -161,8 +166,15 @@ const WatchlistPage: React.FC = () => {
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                 </td>
                 <td>
-                  <button onClick={() => handleDelete(watchlist.symbol)}>
-                    <FontAwesomeIcon icon={faTrash} />
+                  <button
+                    disabled={deleteLoading}
+                    onClick={() => handleDelete(watchlist.symbol)}
+                  >
+                    {deleteLoading ? (
+                      <ClipLoader size={20} color="#123abc" />
+                    ) : (
+                      <FontAwesomeIcon icon={faTrash} />
+                    )}
                   </button>
                 </td>
               </tr>
