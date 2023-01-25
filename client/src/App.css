@@ -47,7 +47,8 @@ section {
 }
 
 .symbol-button,
-.portfolio-symbol-button {
+.portfolio-symbol-button,
+.watchlist-symbol-button {
   cursor: pointer;
   padding: 0.5em 1em;
   background: #2196f3;
@@ -58,7 +59,8 @@ section {
 }
 
 .symbol-button:hover,
-.portfolio-symbol-button:hover {
+.portfolio-symbol-button:hover,
+.watchlist-symbol-button:hover {
   background: #105166;
 }
 

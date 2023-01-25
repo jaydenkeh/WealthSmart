@@ -16,7 +16,7 @@ const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
 const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_3;
 const TRADING_URL = "http://localhost:3000/api/trading";
-const WATCHLIST_URL = "http://localhost:3300/api/watchlist"; // Note: after previous prisma migration in the backend 3000 Port is not working therefore using 3300
+const WATCHLIST_URL = "http://localhost:3000/api/watchlist";
 
 interface Data {
   adjClose: number;
