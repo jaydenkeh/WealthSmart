@@ -18,6 +18,10 @@ const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
 const TRADING_URL = "http://localhost:3000/api/trading";
 const WATCHLIST_URL = "http://localhost:3000/api/watchlist";
 
+interface UserData {
+  userName: string;
+  email: string;
+}
 interface Data {
   adjClose: number;
   change: number;
@@ -58,6 +62,11 @@ interface TradingData {
 
 const SymbolPage: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const [userData, setUserData] = useState<UserData>({
+    userName: "",
+    email: "",
+  });
   const params = useParams();
   const [dailyData, setDailyData] = useState<Data[]>([]);
   const [chartData, setChartData] = useState<number[][]>([]);
@@ -69,20 +78,20 @@ const SymbolPage: React.FC = () => {
     quantity: 0,
     userEmail: "",
   });
-  const [userEmail, setUserEmail] = useState("");
   const [watchlistLoading, setWatchlistLoading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
+  const [isAddedToWatchlist, setIsAddedToWatchlist] = useState(false);
   const [message, setMessage] = useState("");
-  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const checkAuth = async () => {
-      const userinfo = await UserAuth();
-      if (userinfo === undefined) {
-        navigate("/login");
-      } else {
-        setUserEmail(userinfo.email);
+      const userAuth = await UserAuth();
+      console.log(userAuth);
+      if (userAuth) {
+        setUserData({ userName: userAuth.userName, email: userAuth.email });
         setIsAuthenticated(true);
+      } else {
+        navigate("/login");
       }
     };
     checkAuth();
@@ -111,7 +120,7 @@ const SymbolPage: React.FC = () => {
   const fetchDaily = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response) {
         setDailyData(response.data.historical);
@@ -124,7 +133,7 @@ const SymbolPage: React.FC = () => {
   const fetchCompanyQuote = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response.data) {
         setCompanyQuote(response.data);
@@ -139,14 +148,32 @@ const SymbolPage: React.FC = () => {
     }
   };
 
-  const handleAddToWatchlist = async (e: SyntheticEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    const checkWatchlist = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/watchlist/${userData.email}/${companyQuote[0]?.symbol}`
+        );
+        console.log(response);
+        if (response) {
+          setIsAddedToWatchlist(true);
+        } else if (!response) {
+          setIsAddedToWatchlist(false);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    checkWatchlist();
+  }, []);
+
+  const handleAddToWatchlist = async () => {
     setWatchlistLoading(true);
     try {
       const response = await axios.post(
         WATCHLIST_URL,
         {
-          userEmail: userEmail,
+          userEmail: userData.email,
           symbol: companyQuote[0].symbol,
           companyName: companyQuote[0].name,
         },
@@ -159,10 +186,26 @@ const SymbolPage: React.FC = () => {
       console.log(err);
     } finally {
       setWatchlistLoading(false);
+      setIsAddedToWatchlist(true);
     }
   };
 
-  const handleSubmit = async (e: SyntheticEvent) => {
+  const handleDeleteFromWatchlist = async () => {
+    setWatchlistLoading(true);
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/watchlist/${userData.email}/${companyQuote[0].symbol}`
+      );
+      console.log(response.data);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setWatchlistLoading(false);
+      setIsAddedToWatchlist(false);
+    }
+  };
+
+  const handleOrder = async (e: SyntheticEvent) => {
     e.preventDefault();
     setOrderLoading(true);
     try {
@@ -173,7 +216,7 @@ const SymbolPage: React.FC = () => {
           price: tradingData.price,
           symbol: tradingData.symbol,
           quantity: tradingData.quantity,
-          userEmail: userEmail,
+          userEmail: userData.email,
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -186,7 +229,7 @@ const SymbolPage: React.FC = () => {
           price: companyQuote[0].previousClose,
           symbol: companyQuote[0].symbol,
           quantity: 0,
-          userEmail: userEmail,
+          userEmail: userData.email,
         });
         setMessage("Trade executed successfully");
       }
@@ -245,10 +288,16 @@ const SymbolPage: React.FC = () => {
           <Button
             variant="primary"
             disabled={watchlistLoading}
-            onClick={handleAddToWatchlist}
+            onClick={
+              isAddedToWatchlist
+                ? handleDeleteFromWatchlist
+                : handleAddToWatchlist
+            }
           >
             {watchlistLoading ? (
               <ClipLoader size={20} color="#123abc" />
+            ) : isAddedToWatchlist ? (
+              "Remove from Watchlist"
             ) : (
               "Add to Watchlist"
             )}
@@ -272,7 +321,7 @@ const SymbolPage: React.FC = () => {
       {/* <HighchartsReact highcharts={Highcharts} options={options} /> */}
       <br />
       {message}
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleOrder}>
         <Form.Group className="mb-3" controlId="action">
           <Form.Label>Action:</Form.Label>
           <Form.Select

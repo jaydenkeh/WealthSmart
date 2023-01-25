@@ -7,6 +7,12 @@ import { Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
+const FINANCIAL_MODELING_API_KEY = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY;
+const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_2;
+const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_3;
 interface UserData {
   userName: string;
   email: string;
@@ -26,11 +32,6 @@ interface Quote {
   changesPercentage: number;
   volume: number;
 }
-
-const FINANCIAL_MODELING_API_KEY = import.meta.env
-  .VITE_FINANCIAL_MODELING_API_KEY;
-const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
-  .VITE_FINANCIAL_MODELING_API_KEY_2;
 
 const WatchlistPage: React.FC = () => {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ const WatchlistPage: React.FC = () => {
       const fetchQuotes = async () => {
         try {
           const response = await axios.get<Quote[]>(
-            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
+            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
           );
           console.log(response.data);
           setQuotes(response.data);
@@ -127,7 +128,7 @@ const WatchlistPage: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {isAuthenticated && quotes ? (
+          {isAuthenticated && watchlistData ? (
             quotes.map((watchlist, index) => (
               <tr key={index}>
                 <td>
@@ -141,7 +142,12 @@ const WatchlistPage: React.FC = () => {
                 </td>
                 <td>{watchlist?.name}</td>
                 <td>{watchlist?.price}</td>
-                <td>{watchlist?.change}</td>
+                <td>
+                  {watchlist?.change
+                    .toFixed(2)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                </td>
                 <td>
                   {watchlist?.changesPercentage
                     .toFixed(2)
@@ -163,7 +169,7 @@ const WatchlistPage: React.FC = () => {
             ))
           ) : (
             <tr>
-              <td colSpan={6}>Loading...</td>
+              <td colSpan={7}>Loading...</td>
             </tr>
           )}
         </tbody>
