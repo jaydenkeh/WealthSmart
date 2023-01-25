@@ -21,27 +21,30 @@ watchlistRouter.get("/:email", async (req: Request, res: Response) => {
   }
 });
 
-watchlistRouter.get("/:email/:symbol", async (req: Request, res: Response) => {
-  try {
-    const email = req.params.email;
-    const symbol = req.params.symbol;
-    const inWatchlist = await prisma.watchlist.findMany({
-      where: {
-        AND: [{ userEmail: email }, { symbol: symbol }],
-      },
-    });
-    if (!inWatchlist) {
-      return res
-        .status(404)
-        .json({ message: "Security not found in your watchlist" });
+watchlistRouter.get(
+  "/checkwatchlist/:email/:symbol",
+  async (req: Request, res: Response) => {
+    try {
+      const email = req.params.email;
+      const symbol = req.params.symbol;
+      const inWatchlist = await prisma.watchlist.findFirst({
+        where: {
+          AND: [{ userEmail: email }, { symbol: symbol }],
+        },
+      });
+      if (!inWatchlist) {
+        return res
+          .status(404)
+          .json({ message: "Security not found in your watchlist" });
+      }
+      res.status(200).json({ inWatchlist });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    } finally {
+      await prisma.$disconnect();
     }
-    res.json({ inWatchlist });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  } finally {
-    await prisma.$disconnect();
   }
-});
+);
 
 watchlistRouter.post("/", async (req: Request, res: Response) => {
   try {

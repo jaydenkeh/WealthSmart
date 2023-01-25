@@ -152,20 +152,22 @@ const SymbolPage: React.FC = () => {
     const checkWatchlist = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/api/watchlist/${userData.email}/${companyQuote[0]?.symbol}`
+          `http://localhost:3000/api/watchlist/checkwatchlist/${userData.email}/${companyQuote[0]?.symbol}`
         );
-        console.log(response);
-        if (response) {
-          setIsAddedToWatchlist(true);
-        } else if (!response) {
+        if (response.status === 200) {
+          if (response?.data?.inWatchlist?.symbol === companyQuote[0]?.symbol) {
+            setIsAddedToWatchlist(true);
+          }
+        } else if (response.status === 404) {
           setIsAddedToWatchlist(false);
         }
+        console.log(response);
       } catch (err) {
         console.log(err);
       }
     };
     checkWatchlist();
-  }, []);
+  }, [companyQuote]);
 
   const handleAddToWatchlist = async () => {
     setWatchlistLoading(true);
@@ -181,7 +183,6 @@ const SymbolPage: React.FC = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(response);
     } catch (err) {
       console.log(err);
     } finally {
@@ -196,7 +197,6 @@ const SymbolPage: React.FC = () => {
       const response = await axios.delete(
         `http://localhost:3000/api/watchlist/${userData.email}/${companyQuote[0].symbol}`
       );
-      console.log(response.data);
     } catch (err) {
       console.log(err);
     } finally {
