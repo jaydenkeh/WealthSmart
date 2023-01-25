@@ -4,6 +4,8 @@ import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 import { Table } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 interface UserData {
   userName: string;
@@ -92,6 +94,23 @@ const WatchlistPage: React.FC = () => {
     }
   }, [watchlistData]);
 
+  const handleDelete = async (symbol: string) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/api/watchlist/${userData.email}/${symbol}`
+      );
+      if (response.data.error) {
+        console.log(response.data.error);
+      } else {
+        setQuotes((prevQuotes) =>
+          prevQuotes.filter((quote) => quote.symbol !== symbol)
+        );
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <h3>{userData.userName}'s Watchlist</h3>
@@ -104,6 +123,7 @@ const WatchlistPage: React.FC = () => {
             <th>Change (USD)</th>
             <th>Change %</th>
             <th>Volume</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -133,6 +153,11 @@ const WatchlistPage: React.FC = () => {
                   {watchlist?.volume
                     .toString()
                     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                </td>
+                <td>
+                  <button onClick={() => handleDelete(watchlist.symbol)}>
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
                 </td>
               </tr>
             ))
