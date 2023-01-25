@@ -15,6 +15,7 @@ const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/; // min. 4 characters, must begin w
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/; // min. 8 characters, must include uppercase and lowercase letter, a number and a special character
 const REGISTER_URL = "http://localhost:3000/api/signup";
+const ACCOUNTVALUE_URL = "http://localhost:3000/api/accountvalue";
 
 const SignupPage: React.FC = () => {
   const [userName, setUsername] = useState("");
@@ -70,13 +71,32 @@ const SignupPage: React.FC = () => {
           headers: { "Content-Type": "application/json" },
         }
       );
-      console.log(response?.data);
-      setSuccess(true);
-      //clear state and controlled inputs
-      setUsername("");
-      setEmail("");
-      setPwd("");
-      setMatchPwd("");
+      if (response.status === 201) {
+        //make post request to accountValue route to set up user initial account balances
+        const initialAssetBalance = 100000;
+        const initialSecuritiesValue = 0;
+        const initialcashBalance = 100000;
+        const initialProfitLoss = 0;
+        await axios.post(
+          ACCOUNTVALUE_URL,
+          {
+            totalAssets: initialAssetBalance,
+            totalSecuritiesValue: initialSecuritiesValue,
+            cashBalance: initialcashBalance,
+            totalProfitLoss: initialProfitLoss,
+            userEmail: email,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+        setSuccess(true);
+        //clear state and controlled inputs
+        setUsername("");
+        setEmail("");
+        setPwd("");
+        setMatchPwd("");
+      }
     } catch (err: any) {
       if (typeof err === "object" && "response" in err) {
         const axiosError = err as AxiosError;
