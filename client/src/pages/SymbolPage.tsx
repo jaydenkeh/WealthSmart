@@ -111,7 +111,7 @@ const SymbolPage: React.FC = () => {
   const fetchDaily = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
+        `https://financialmodelingprep.com/api/v3/historical-price-full/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
       );
       if (response) {
         setDailyData(response.data.historical);
@@ -124,7 +124,7 @@ const SymbolPage: React.FC = () => {
   const fetchCompanyQuote = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY}`
       );
       if (response.data) {
         setCompanyQuote(response.data);
@@ -149,10 +149,6 @@ const SymbolPage: React.FC = () => {
           userEmail: userEmail,
           symbol: companyQuote[0].symbol,
           companyName: companyQuote[0].name,
-          price: companyQuote[0].price,
-          priceChange: companyQuote[0].change,
-          percentChange: companyQuote[0].changesPercentage,
-          volume: companyQuote[0].volume,
         },
         {
           headers: { "Content-Type": "application/json" },

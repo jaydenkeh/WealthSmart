@@ -47,10 +47,6 @@ model Watchlist {
   id               Int      @id @default(autoincrement())
   symbol           String
   companyName      String
-  price            Float
-  priceChange      Float
-  percentChange    Float
-  volume           Int
   user             User     @relation("Watchlist", fields: [userEmail], references: [email])
   userEmail        String  
 }

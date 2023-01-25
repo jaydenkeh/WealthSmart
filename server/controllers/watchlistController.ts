@@ -23,23 +23,11 @@ watchlistRouter.get("/:email", async (req: Request, res: Response) => {
 
 watchlistRouter.post("/", async (req: Request, res: Response) => {
   try {
-    const {
-      userEmail,
-      symbol,
-      companyName,
-      price,
-      priceChange,
-      percentChange,
-      volume,
-    } = req.body;
+    const { userEmail, symbol, companyName } = req.body;
     const watchlist = await prisma.watchlist.create({
       data: {
         symbol: symbol,
         companyName: companyName,
-        price: price,
-        priceChange: priceChange,
-        percentChange: percentChange,
-        volume: volume,
         user: { connect: { email: userEmail } },
       },
     });
