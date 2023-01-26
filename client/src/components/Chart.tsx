@@ -36,7 +36,7 @@ const Chart: React.FC<ChartProps> = ({ symbol, name }) => {
     const fetchDaily = async () => {
       try {
         const response = await axios.get(
-          `https://financialmodelingprep.com/api/v3/historical-price-full/${symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
+          `https://financialmodelingprep.com/api/v3/historical-price-full/${symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
         );
         if (response) {
           setDailyData(response.data.historical);

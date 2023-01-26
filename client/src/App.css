@@ -131,11 +131,6 @@
   background: #70190d;
 }
 
-.company-data-container {
-  display: flex;
-  justify-content: space-around;
-}
-
 .signup-img {
   width: 28%;
   position: absolute;
@@ -174,4 +169,19 @@
 .top-gainers-container,
 .top-losers-container {
   width: 48%;
+}
+
+.security-quote-container {
+  padding: 26px 20px 22px 20px;
+}
+
+.security-data-container {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 2px;
+}
+
+.trading-form-container {
+  padding: 4px 0 36px 30px;
 }

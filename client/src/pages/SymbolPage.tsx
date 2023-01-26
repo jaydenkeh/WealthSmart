@@ -97,7 +97,7 @@ const SymbolPage: React.FC = () => {
   const fetchCompanyQuote = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_4}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response.data) {
         setCompanyQuote(response.data);
@@ -250,7 +250,7 @@ const SymbolPage: React.FC = () => {
   return (
     <>
       {isAuthenticated && companyQuote ? (
-        <div className="company-quote">
+        <div className="security-quote-container">
           <h3>
             {companyQuote[0]?.name} - {companyQuote[0]?.symbol}
           </h3>
@@ -271,69 +271,128 @@ const SymbolPage: React.FC = () => {
               "Add to Watchlist"
             )}
           </Button>
-          <p>Price: {companyQuote[0]?.price}</p>
-          <p>
-            Change: {companyQuote[0]?.change} (
-            {companyQuote[0]?.changesPercentage}%)
-          </p>
-          <div className="company-data-container">
-            <p>Day High: {companyQuote[0]?.dayHigh}</p>
-            <p>Day Low: {companyQuote[0]?.dayLow}</p>
-            <p>52 Weeks High: {companyQuote[0]?.yearHigh}</p>
-            <p>52 Weeks Low: {companyQuote[0]?.yearLow}</p>
-            <p>Open: {companyQuote[0]?.open}</p>
-            <p>Previous Close: {companyQuote[0]?.previousClose}</p>
-            <p>Volume: {companyQuote[0]?.volume}</p>
+          <div className="security-data-container">
+            <p>
+              Price: $
+              {companyQuote[0]?.price
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p>
+              Change: $
+              {companyQuote[0]?.change
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}{" "}
+              (
+              {companyQuote[0]?.changesPercentage
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              %)
+            </p>
+            <p>
+              Day High: $
+              {companyQuote[0]?.dayHigh
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p>
+              Day Low: $
+              {companyQuote[0]?.dayLow
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p>
+              52 Weeks High: $
+              {companyQuote[0]?.yearHigh
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p>
+              52 Weeks Low: $
+              {companyQuote[0]?.yearLow
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p>
+              Open: $
+              {companyQuote[0]?.open
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p>
+              Previous Close: $
+              {companyQuote[0]?.previousClose
+                .toFixed(2)
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p>
+              Volume:{" "}
+              {companyQuote[0]?.volume
+                .toString()
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
           </div>
         </div>
       ) : null}
       <Chart symbol={companyQuote[0]?.symbol} name={companyQuote[0]?.name} />
       <br />
       {message}
-      <Form onSubmit={handleOrder}>
-        <Form.Group className="mb-3" controlId="action">
-          <Form.Label>Action:</Form.Label>
-          <Form.Select
-            name="action"
-            value={action}
-            onChange={(e) => setAction(e.currentTarget.value)}
-          >
-            <option value="buy">Buy</option>
-            <option value="sell">Sell</option>
-          </Form.Select>
-        </Form.Group>
+      <div className="trading-form-container">
+        <h5>Place Trade</h5>
+        <Form onSubmit={handleOrder}>
+          <Form.Group className="mb-3 col-4" controlId="action">
+            <Form.Label>Action:</Form.Label>
+            <Form.Select
+              name="action"
+              value={action}
+              onChange={(e) => setAction(e.currentTarget.value)}
+            >
+              <option value="buy">Buy</option>
+              <option value="sell">Sell</option>
+            </Form.Select>
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="price">
-          <Form.Label>Price:</Form.Label>
-          <Form.Control
-            type="number"
-            step=".01"
-            min="0"
-            name="price"
-            value={price}
-            onChange={(e) => setPrice(Number(e.currentTarget.value))}
-          />
-        </Form.Group>
+          <Form.Group className="mb-3 col-4" controlId="price">
+            <Form.Label>Price:</Form.Label>
+            <Form.Control
+              type="number"
+              step=".01"
+              min="0"
+              name="price"
+              value={price}
+              onChange={(e) => setPrice(Number(e.currentTarget.value))}
+            />
+          </Form.Group>
 
-        <Form.Group className="mb-3" controlId="quantity">
-          <Form.Label>Quantity:</Form.Label>
-          <Form.Control
-            type="number"
-            min="0"
-            name="quantity"
-            placeholder="Min Unit 1"
-            defaultValue={quantity}
-            onChange={(e) => setQuantity(Number(e.currentTarget.value))}
-          />
-        </Form.Group>
-        <Button variant="primary" type="submit" disabled={orderLoading}>
-          {orderLoading ? (
-            <ClipLoader size={20} color="#123abc" />
-          ) : (
-            "Place Order"
-          )}
-        </Button>
-      </Form>
+          <Form.Group className="mb-3 col-4" controlId="quantity">
+            <Form.Label>Quantity:</Form.Label>
+            <Form.Control
+              type="number"
+              min="0"
+              name="quantity"
+              placeholder="Min Unit 1"
+              defaultValue={quantity}
+              onChange={(e) => setQuantity(Number(e.currentTarget.value))}
+            />
+          </Form.Group>
+          <Button variant="primary" type="submit" disabled={orderLoading}>
+            {orderLoading ? (
+              <ClipLoader size={20} color="#123abc" />
+            ) : (
+              "Place Order"
+            )}
+          </Button>
+        </Form>
+      </div>
     </>
   );
 };
