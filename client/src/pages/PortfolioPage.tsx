@@ -94,9 +94,11 @@ const PortfolioPage: React.FC = () => {
     }
   };
 
-  // function map out the existing portfolio holding of the user and show whether it is a profit/loss trade
+  //TODO Relook into user account balances calcuation + backend server setup
+  // function fetches the LIVE data of the holdings in the existing portfolio of the user
+  // and calculate the total P/L of the user at the point of fetch by adding with the total P/L in the user account till date
   useEffect(() => {
-    if (portfolioData) {
+    if (portfolioData && accountValueData) {
       const portfolioSymbols = portfolioData.map(
         (portfolio) => portfolio.symbol
       );
@@ -108,16 +110,6 @@ const PortfolioPage: React.FC = () => {
           );
           console.log(response.data);
           setQuotes(response.data);
-          let totalProfitLoss = 0;
-          portfolioData.forEach((portfolio) => {
-            const quote = quotes.find((q) => q.symbol === portfolio.symbol);
-            if (quote) {
-              const profitLoss =
-                (quote.price - portfolio.purchasePrice) * portfolio.quantity;
-              totalProfitLoss += profitLoss;
-            }
-          });
-          setTotalProfitLoss(totalProfitLoss);
         } catch (err) {
           console.log(err);
         }
@@ -130,35 +122,10 @@ const PortfolioPage: React.FC = () => {
     <>
       <div className="user-portfolio">
         <h3>{userData.userName}'s Portfolio</h3>
-        <p>
-          Total Assets (USD): $
-          {accountValueData?.totalAssets
-            .toFixed(2)
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        </p>
-        <p>
-          Total Securities Value (USD): $
-          {accountValueData?.totalSecuritiesValue
-            .toFixed(2)
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        </p>
-        <p>
-          Cash Balance (USD): $
-          {accountValueData?.cashBalance
-            .toFixed(2)
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        </p>
-        <p>
-          Profit and Loss (USD): $
-          {totalProfitLoss
-            .toFixed(2)
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        </p>
-        <h4>Current securities holdings</h4>
+        {/* Todo */}
+        {/* <p>Total Cash Balance (USD): $</p>
+        <p>Total Securities Value (USD): $</p>
+        <p>Total Profit and Loss (USD): $</p> */}
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -172,8 +139,6 @@ const PortfolioPage: React.FC = () => {
           <tbody>
             {isAuthenticated && portfolioData ? (
               portfolioData.map((portfolio, index) => {
-                let securityValue =
-                  portfolio.purchasePrice * portfolio.quantity;
                 let profitLoss = 0;
                 if (quotes && quotes.length > 0) {
                   let currentQuote = quotes.find(
@@ -185,6 +150,8 @@ const PortfolioPage: React.FC = () => {
                       portfolio.quantity;
                   }
                 }
+                let securityValue =
+                  portfolio.purchasePrice * portfolio.quantity + profitLoss;
                 return (
                   <tr key={index}>
                     <td>

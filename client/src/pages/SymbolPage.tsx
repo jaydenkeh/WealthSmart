@@ -45,32 +45,29 @@ interface AccountValueData {
   userEmail: string;
 }
 
-interface TradingData {
-  action: "buy" | "sell";
-  price: number;
+interface PortfolioData {
+  id: number;
   symbol: string;
   quantity: number;
+  purchasePrice: number;
   userEmail: string;
 }
 
 const SymbolPage: React.FC = () => {
   const navigate = useNavigate();
+  const params = useParams();
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
   const [userData, setUserData] = useState<UserData>({
     userName: "",
     email: "",
   });
-  const params = useParams();
+  const [action, setAction] = useState<string>("buy");
+  const [price, setPrice] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(0);
   const [companyQuote, setCompanyQuote] = useState<CompanyQuote[]>([]);
-  const [tradingData, setTradingData] = useState<TradingData>({
-    action: "buy",
-    price: 0,
-    symbol: "",
-    quantity: 0,
-    userEmail: "",
-  });
   const [accountValueData, setAccountValueData] =
     useState<AccountValueData | null>(null);
+  const [portfolioData, setPortfolioData] = useState<PortfolioData[]>([]);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
   const [isAddedToWatchlist, setIsAddedToWatchlist] = useState(false);
@@ -92,7 +89,9 @@ const SymbolPage: React.FC = () => {
 
   useEffect(() => {
     fetchCompanyQuote();
+    checkWatchlist();
     fetchUserAccountValue();
+    fetchPortfolio();
   }, [userData]);
 
   const fetchCompanyQuote = async () => {
@@ -102,11 +101,7 @@ const SymbolPage: React.FC = () => {
       );
       if (response.data) {
         setCompanyQuote(response.data);
-        setTradingData({
-          ...tradingData,
-          symbol: response.data[0].symbol,
-          price: response.data[0].previousClose,
-        });
+        setPrice(response.data[0].previousClose);
       }
     } catch (err) {
       console.log(err);
@@ -119,32 +114,39 @@ const SymbolPage: React.FC = () => {
         `http://localhost:3000/api/accountvalue/${userData.email}`
       );
       setAccountValueData(response.data.accountValue);
-      console.log(accountValueData);
     } catch (err) {
       console.log(err);
     }
   };
 
-  useEffect(() => {
-    const checkWatchlist = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/api/watchlist/checkwatchlist/${userData.email}/${companyQuote[0]?.symbol}`
-        );
-        if (response.status === 200) {
-          if (response?.data?.inWatchlist?.symbol === companyQuote[0]?.symbol) {
-            setIsAddedToWatchlist(true);
-          }
-        } else if (response.status === 404) {
-          setIsAddedToWatchlist(false);
+  const fetchPortfolio = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/portfolio/${userData.email}`
+      );
+      console.log(response.data.portfolio);
+      setPortfolioData(response.data.portfolio);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const checkWatchlist = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/watchlist/checkwatchlist/${userData.email}/${params.symbol}`
+      );
+      if (response.status === 200) {
+        if (response?.data?.inWatchlist?.symbol === params.symbol) {
+          setIsAddedToWatchlist(true);
         }
-        console.log(response);
-      } catch (err) {
-        console.log(err);
+      } else if (response.status === 404) {
+        setIsAddedToWatchlist(false);
       }
-    };
-    checkWatchlist();
-  }, [companyQuote]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const handleAddToWatchlist = async () => {
     setWatchlistLoading(true);
@@ -185,29 +187,25 @@ const SymbolPage: React.FC = () => {
   const handleOrder = async (e: SyntheticEvent) => {
     e.preventDefault();
     setOrderLoading(true);
-    fetchUserAccountValue();
     try {
-      const action = tradingData.action;
-      const price = tradingData.price;
-      const symbol = tradingData.symbol;
-      const quantity = tradingData.quantity;
-      const userEmail = userData.email;
+      const postaction = action;
+      const postprice = price;
+      const postquantity = quantity;
       const tradeResponse = await axios.post(TRADING_URL, {
-        action,
-        price,
-        symbol,
-        quantity,
-        userEmail,
+        action: postaction,
+        price: postprice,
+        symbol: params.symbol,
+        quantity: postquantity,
+        userEmail: userData.email,
       });
+      console.log(tradeResponse);
       if (tradeResponse.status === 201) {
-        // update account value
-        let accountValueResponse;
-        if (action === "buy" && accountValueData) {
-          const totalSecurityValue = price * quantity;
-          accountValueResponse = await axios.put(
+        if (postaction === "buy" && accountValueData) {
+          const totalSecurityValue = postprice * postquantity;
+          const accountValueResponse = await axios.put(
             `http://localhost:3000/api/accountvalue/${userData.email}/`,
             {
-              userEmail,
+              userEmail: userData.email,
               totalAssets: accountValueData.totalAssets,
               totalSecuritiesValue:
                 accountValueData.totalSecuritiesValue + totalSecurityValue,
@@ -216,35 +214,27 @@ const SymbolPage: React.FC = () => {
             }
           );
         }
-        // if its a sell order, check with current closing price and see if its a profit or loss
-        if (action === "sell" && accountValueData) {
-          const currentPrice = companyQuote[0].previousClose;
-          let profitLoss = 0;
-          if (currentPrice > price) {
-            profitLoss = (currentPrice - price) * quantity;
-          } else {
-            profitLoss = -((price - currentPrice) * quantity);
-          }
-          accountValueResponse = await axios.put(
+        if (postaction === "sell" && accountValueData && portfolioData) {
+          console.log(portfolioData[0].purchasePrice);
+          const totalSecurityValue =
+            portfolioData[0].purchasePrice * postquantity;
+          const profitLoss = price - portfolioData[0].purchasePrice;
+          const accountValueResponse = await axios.put(
             `http://localhost:3000/api/accountvalue/${userData.email}/`,
             {
-              userEmail,
+              userEmail: userData.email,
               totalAssets: accountValueData.totalAssets + profitLoss,
               totalSecuritiesValue:
-                accountValueData.totalSecuritiesValue - quantity * price,
+                accountValueData.totalSecuritiesValue -
+                postquantity * postprice,
               cashBalance:
-                accountValueData.cashBalance + quantity * currentPrice,
+                accountValueData.cashBalance + totalSecurityValue + profitLoss,
               totalProfitLoss: accountValueData.totalProfitLoss + profitLoss,
             }
           );
         }
-        setTradingData({
-          action: "buy",
-          price: companyQuote[0].previousClose,
-          symbol: companyQuote[0].symbol,
-          quantity: 0,
-          userEmail: userData.email,
-        });
+        setAction("buy");
+        setPrice(companyQuote[0].previousClose);
         setMessage("Trade executed successfully");
       }
     } catch (err: any) {
@@ -255,17 +245,6 @@ const SymbolPage: React.FC = () => {
     } finally {
       setOrderLoading(false);
     }
-  };
-
-  const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const { name, value } = e.currentTarget;
-    setTradingData({ ...tradingData, [name]: Number(value) });
-    console.log(tradingData);
-  };
-
-  const handleChange2: React.ChangeEventHandler<HTMLSelectElement> = (e) => {
-    const { name, value } = e.currentTarget;
-    setTradingData({ ...tradingData, [name]: value });
   };
 
   return (
@@ -316,8 +295,8 @@ const SymbolPage: React.FC = () => {
           <Form.Label>Action:</Form.Label>
           <Form.Select
             name="action"
-            value={tradingData.action}
-            onChange={handleChange2}
+            value={action}
+            onChange={(e) => setAction(e.currentTarget.value)}
           >
             <option value="buy">Buy</option>
             <option value="sell">Sell</option>
@@ -331,8 +310,8 @@ const SymbolPage: React.FC = () => {
             step=".01"
             min="0"
             name="price"
-            value={tradingData.price}
-            onChange={handleChange}
+            value={price}
+            onChange={(e) => setPrice(Number(e.currentTarget.value))}
           />
         </Form.Group>
 
@@ -343,7 +322,8 @@ const SymbolPage: React.FC = () => {
             min="0"
             name="quantity"
             placeholder="Min Unit 1"
-            onChange={handleChange}
+            defaultValue={quantity}
+            onChange={(e) => setQuantity(Number(e.currentTarget.value))}
           />
         </Form.Group>
         <Button variant="primary" type="submit" disabled={orderLoading}>
