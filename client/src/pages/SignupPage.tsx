@@ -10,6 +10,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios, { AxiosError } from "axios";
+import Signup from "../assets/Signup.jpg";
+import Alert from "react-bootstrap/Alert";
+import { ClipLoader } from "react-spinners";
 
 const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/; // min. 4 characters, must begin with a letter
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -33,6 +36,8 @@ const SignupPage: React.FC = () => {
   const [errMsg, setErrMsg] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const [signupLoading, setSignupLoading] = useState(false);
+
   useEffect(() => {
     setValidName(USER_REGEX.test(userName));
   }, [userName]);
@@ -52,6 +57,7 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
+    setSignupLoading(true);
     const v1 = USER_REGEX.test(userName);
     const v2 = EMAIL_REGEX.test(email);
     const v3 = PWD_REGEX.test(password);
@@ -110,27 +116,30 @@ const SignupPage: React.FC = () => {
       } else {
         setErrMsg("No Server Response");
       }
+    } finally {
+      setSignupLoading(false);
     }
   };
 
   return (
     <>
       {success ? (
-        <section>
-          <h1>Success!</h1>
-          <p>
-            <a href="/login">Sign In</a>
-          </p>
-        </section>
+        <div className="signup-success">
+          <Alert key="info" variant="info" className="col-4">
+            <Alert.Heading>Congratulations, sign up success!</Alert.Heading>
+            <Alert.Link href="/login">Login Now</Alert.Link>
+          </Alert>
+          <img src={Signup} className="signup-img" />
+        </div>
       ) : (
-        <section>
+        <div className="signup-form-container">
           <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
             {errMsg}
           </p>
           <FormContainer>
             <h1>Sign Up</h1>
             <Form onSubmit={handleSubmit}>
-              <Form.Group className="my-3" controlId="userName">
+              <Form.Group className="my-3 col-8" controlId="userName">
                 <Form.Label>Username</Form.Label>
                 <FontAwesomeIcon
                   icon={faCheck}
@@ -164,7 +173,7 @@ const SignupPage: React.FC = () => {
                 </p>
               </Form.Group>
 
-              <Form.Group className="my-3" controlId="email">
+              <Form.Group className="my-3 col-8" controlId="email">
                 <Form.Label>Email address</Form.Label>
                 <FontAwesomeIcon
                   icon={faCheck}
@@ -196,7 +205,7 @@ const SignupPage: React.FC = () => {
                 </p>
               </Form.Group>
 
-              <Form.Group className="my-3" controlId="password">
+              <Form.Group className="my-3 col-8" controlId="password">
                 <Form.Label>Password</Form.Label>
                 <FontAwesomeIcon
                   icon={faCheck}
@@ -235,7 +244,7 @@ const SignupPage: React.FC = () => {
                   <span aria-label="percent">%</span>
                 </p>
               </Form.Group>
-              <Form.Group className="my-3" controlId="confirm-password">
+              <Form.Group className="my-3 col-8" controlId="confirm-password">
                 <Form.Label>Confirm Your Password</Form.Label>
                 <FontAwesomeIcon
                   icon={faCheck}
@@ -274,14 +283,19 @@ const SignupPage: React.FC = () => {
                     : false
                 }
               >
-                Submit
+                {signupLoading ? (
+                  <ClipLoader size={20} color="#123abc" />
+                ) : (
+                  "Submit"
+                )}
               </Button>
             </Form>
             <Form.Text muted>
-              Already registered? <Link to="/login">Sign In</Link>
+              Already registered? <Link to="/login">Login</Link>
             </Form.Text>
           </FormContainer>
-        </section>
+          <img src={Signup} className="signup-img" />
+        </div>
       )}
     </>
   );
