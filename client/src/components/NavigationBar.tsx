@@ -1,17 +1,20 @@
 import React, { useContext } from "react";
-import Button from "react-bootstrap/Button";
+import { useNavigate } from "react-router-dom";
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { AuthContext } from "../context/AuthContext";
+import Button from "react-bootstrap/Button";
+import Form from "react-bootstrap/Form";
 
 const NavigationBar: React.FC = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    navigate("/login");
   };
 
   return (
@@ -23,17 +26,16 @@ const NavigationBar: React.FC = () => {
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
               <Nav
-                className="me-auto my-2 my-lg-0"
+                className="me-auto my-2 my-lg-1"
                 style={{ maxHeight: "100px" }}
                 navbarScroll
               >
                 <Nav.Link href="/portfolio">Investment Portfolio</Nav.Link>
                 <Nav.Link href="/watchlist">Watchlist</Nav.Link>
-                <Nav.Link href="/login" onClick={() => handleLogout()}>
-                  Logout
-                </Nav.Link>
+                <Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link>
               </Nav>
-              <Form className="d-flex">
+              {/* TODO future implementation */}
+              {/* <Form className="d-flex">
                 <Form.Control
                   type="search"
                   placeholder="Search"
@@ -41,7 +43,7 @@ const NavigationBar: React.FC = () => {
                   aria-label="Search"
                 />
                 <Button variant="outline-success">Search</Button>
-              </Form>
+              </Form> */}
             </Navbar.Collapse>
           </>
         ) : (
