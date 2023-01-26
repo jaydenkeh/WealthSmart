@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import FormContainer from "../components/FormContainer";
 import axios, { AxiosError } from "axios";
 import { AuthContext } from "../context/AuthContext";
+import Investment from "../assets/Investment.jpg";
 
 const LOGIN_URL = "http://localhost:3000/api/login";
 
@@ -60,14 +61,14 @@ const LoginPage: React.FC = () => {
 
   return (
     <>
-      <section>
+      <div className="login-container">
         <p className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">
           {errMsg}
         </p>
         <FormContainer>
           <h1>Login</h1>
           <Form onSubmit={handleSubmit}>
-            <Form.Group className="my-3" controlId="email">
+            <Form.Group className="my-3 col-8" controlId="email">
               <Form.Label>Email address</Form.Label>
               <Form.Control
                 type="email"
@@ -78,7 +79,7 @@ const LoginPage: React.FC = () => {
               />
             </Form.Group>
 
-            <Form.Group className="my-3" controlId="password">
+            <Form.Group className="my-3 col-8" controlId="password">
               <Form.Label>Password</Form.Label>
               <Form.Control
                 type="password"
@@ -96,7 +97,8 @@ const LoginPage: React.FC = () => {
             Need an account? <Link to="/signup">Sign Up Now</Link>
           </Form.Text>
         </FormContainer>
-      </section>
+        <img src={Investment} className="investment-img" />
+      </div>
     </>
   );
 };

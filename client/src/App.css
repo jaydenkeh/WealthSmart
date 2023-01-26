@@ -5,6 +5,13 @@
   padding: 6rem 8rem 0 0;
 }
 
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 12rem 8rem 0 0;
+}
+
 .signup-success {
   display: flex;
   flex-direction: column;
@@ -81,11 +88,19 @@
   width: 28%;
   position: absolute;
   right: 18%;
-  top: 8%;
+  top: 14%;
+}
+
+.investment-img {
+  width: 30%;
+  position: absolute;
+  right: 16%;
+  top: 22%;
 }
 
 @media (max-width: 600px) {
-  .signup-img {
+  .signup-img,
+  .investment-img {
     width: 300px;
   }
 }
