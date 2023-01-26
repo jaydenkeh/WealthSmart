@@ -185,3 +185,15 @@
 .trading-form-container {
   padding: 4px 0 36px 30px;
 }
+
+.portfolio-container {
+  padding: 26px 20px 0 20px;
+  width: 60%;
+}
+
+.portfolio-img {
+  width: 30%;
+  position: absolute;
+  right: 6%;
+  top: 22%;
+}

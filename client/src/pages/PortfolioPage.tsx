@@ -4,6 +4,7 @@ import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
 import { Table } from "react-bootstrap";
 import axios from "axios";
+import Portfolio from "../assets/Portfolio.jpg";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -120,7 +121,7 @@ const PortfolioPage: React.FC = () => {
 
   return (
     <>
-      <div className="user-portfolio">
+      <div className="portfolio-container">
         <h3>{userData.userName}'s Portfolio</h3>
         {/* Todo */}
         {/* <p>Total Cash Balance (USD): $</p>
@@ -194,6 +195,7 @@ const PortfolioPage: React.FC = () => {
             )}
           </tbody>
         </Table>
+        <img src={Portfolio} className="portfolio-img" />
       </div>
     </>
   );
