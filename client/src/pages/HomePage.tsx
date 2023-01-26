@@ -10,12 +10,12 @@ const HomePage: React.FC = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const userinfo = await UserAuth();
-      console.log(userinfo);
-      if (userinfo === undefined) {
-        navigate("/login");
-      } else {
+      const userAuth = await UserAuth();
+      console.log(userAuth);
+      if (userAuth) {
         setIsAuthenticated(true);
+      } else {
+        navigate("/login");
       }
     };
     checkAuth();
