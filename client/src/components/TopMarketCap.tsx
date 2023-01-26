@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
-
+import { Pagination } from "react-bootstrap";
 interface Data {
   symbol: string;
   companyName: string;
@@ -25,6 +25,9 @@ const MARKET_CAP_URL = `https://financialmodelingprep.com/api/v3/stock-screener`
 const TopMarketCap: React.FC = () => {
   const [market, setMarket] = useState<Data[] | null>(null);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 25;
 
   const fetchMarket = async () => {
     try {
@@ -34,12 +37,13 @@ const TopMarketCap: React.FC = () => {
           isEtf: false,
           isActivelyTrading: true,
           exchange: "NYSE,NASDAQ",
-          apikey: FINANCIAL_MODELING_API_KEY,
+          apikey: FINANCIAL_MODELING_API_KEY_2,
         },
       });
       if (response) {
         setMarket(response.data);
         console.log(response.data);
+        setTotalPages(Math.ceil(response.data.length / itemsPerPage));
       }
     } catch (err) {
       console.log(err);
@@ -70,6 +74,10 @@ const TopMarketCap: React.FC = () => {
             {market &&
               market
                 .filter((data) => data.volume && data.industry)
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage
+                )
                 .map((data, i) => (
                   <tr key={i}>
                     <td>
@@ -86,7 +94,12 @@ const TopMarketCap: React.FC = () => {
                         .toString()
                         .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                     </td>
-                    <td>{data?.price}</td>
+                    <td>
+                      {data?.price
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
                     <td>
                       {data?.volume
                         .toString()
@@ -98,6 +111,21 @@ const TopMarketCap: React.FC = () => {
                 ))}
           </tbody>
         </Table>
+        <Pagination>
+          <Pagination.First onClick={() => setCurrentPage(1)} />
+          <Pagination.Prev onClick={() => setCurrentPage(currentPage - 1)} />
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Pagination.Item
+              key={page}
+              active={page === currentPage}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next onClick={() => setCurrentPage(currentPage + 1)} />
+          <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
+        </Pagination>
       </div>
     </>
   );
