@@ -7,6 +7,7 @@ import axios from "axios";
 import { Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import Watchlist from "../assets/Watchlist.jpg";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -119,73 +120,76 @@ const WatchlistPage: React.FC = () => {
 
   return (
     <>
-      <h3>{userData.userName}'s Watchlist</h3>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Symbol</th>
-            <th>Security Name</th>
-            <th>Last (USD)</th>
-            <th>Change (USD)</th>
-            <th>Change %</th>
-            <th>Volume</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {isAuthenticated ? (
-            quotes.map((watchlist, index) => (
-              <tr key={index}>
-                <td>
-                  {" "}
-                  <span
-                    className="watchlist-symbol-button"
-                    onClick={() => navigate(`/symbol/${watchlist.symbol}`)}
-                  >
-                    {watchlist?.symbol}
-                  </span>
-                </td>
-                <td>{watchlist?.name}</td>
-                <td>{watchlist?.price}</td>
-                <td>
-                  {watchlist?.change
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </td>
-                <td>
-                  {watchlist?.changesPercentage
-                    .toFixed(2)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  %
-                </td>
-                <td>
-                  {watchlist?.volume
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                </td>
-                <td>
-                  <button
-                    disabled={deleteLoading}
-                    onClick={() => handleDelete(watchlist.symbol)}
-                  >
-                    {deleteLoading ? (
-                      <ClipLoader size={20} color="#123abc" />
-                    ) : (
-                      <FontAwesomeIcon icon={faTrash} />
-                    )}
-                  </button>
-                </td>
-              </tr>
-            ))
-          ) : (
+      <div className="watchlist-container">
+        <h3>{userData.userName}'s Watchlist</h3>
+        <Table striped bordered hover>
+          <thead>
             <tr>
-              <td colSpan={7}>Loading...</td>
+              <th>Symbol</th>
+              <th>Name</th>
+              <th>Last (USD)</th>
+              <th>Change (USD)</th>
+              <th>Change %</th>
+              <th>Volume</th>
+              <th>Action</th>
             </tr>
-          )}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {isAuthenticated ? (
+              quotes.map((watchlist, index) => (
+                <tr key={index}>
+                  <td>
+                    {" "}
+                    <span
+                      className="watchlist-symbol-button"
+                      onClick={() => navigate(`/symbol/${watchlist.symbol}`)}
+                    >
+                      {watchlist?.symbol}
+                    </span>
+                  </td>
+                  <td>{watchlist?.name}</td>
+                  <td>{watchlist?.price}</td>
+                  <td>
+                    {watchlist?.change
+                      .toFixed(2)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </td>
+                  <td>
+                    {watchlist?.changesPercentage
+                      .toFixed(2)
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    %
+                  </td>
+                  <td>
+                    {watchlist?.volume
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                  </td>
+                  <td>
+                    <button
+                      disabled={deleteLoading}
+                      onClick={() => handleDelete(watchlist.symbol)}
+                    >
+                      {deleteLoading ? (
+                        <ClipLoader size={20} color="#123abc" />
+                      ) : (
+                        <FontAwesomeIcon icon={faTrash} />
+                      )}
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={7}>Loading...</td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
+        <img src={Watchlist} className="watchlist-img" />
+      </div>
     </>
   );
 };

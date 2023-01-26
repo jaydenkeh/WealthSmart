@@ -186,12 +186,14 @@
   padding: 4px 0 36px 30px;
 }
 
-.portfolio-container {
+.portfolio-container,
+.watchlist-container {
   padding: 26px 20px 0 20px;
   width: 60%;
 }
 
-.portfolio-img {
+.portfolio-img,
+.watchlist-img {
   width: 30%;
   position: absolute;
   right: 6%;
