@@ -46,13 +46,11 @@ model Portfolio {
 }
 
 model AccountValue {
-  id                   Int   @id @default(autoincrement())
-  totalAssets          Float
-  totalSecuritiesValue Float
-  cashBalance          Float
-  totalProfitLoss      Float
-  user                 User @relation("AccountValue",fields: [userEmail], references: [email])
-  userEmail            String
+  id                    Int   @id @default(autoincrement())
+  totalCashBalance      Float @default(100000)
+  accumulatedProfitLoss Float @default(0)
+  user                  User  @relation("AccountValue",fields: [userEmail], references: [email])
+  userEmail             String
 }
 
 model Watchlist {
