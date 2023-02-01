@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
@@ -51,7 +51,6 @@ const PortfolioPage: React.FC = () => {
   const [accountValueData, setAccountValueData] =
     useState<AccountValueData | null>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [totalProfitLoss, setTotalProfitLoss] = useState(0);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -69,7 +68,7 @@ const PortfolioPage: React.FC = () => {
 
   useEffect(() => {
     fetchPortfolio();
-    fetchUserAccountValue();
+    // fetchUserAccountValue();
   }, [userData]);
 
   const fetchPortfolio = async () => {
@@ -95,38 +94,53 @@ const PortfolioPage: React.FC = () => {
     }
   };
 
-  //TODO Relook into user account balances calcuation + backend server setup
-  // function fetches the LIVE data of the holdings in the existing portfolio of the user
-  // and calculate the total P/L of the user at the point of fetch by adding with the total P/L in the user account till date
   useEffect(() => {
-    if (portfolioData && accountValueData) {
-      const portfolioSymbols = portfolioData.map(
-        (portfolio) => portfolio.symbol
-      );
-      const symbols = portfolioSymbols.join(",");
-      const fetchQuotes = async () => {
-        try {
-          const response = await axios.get<Quote[]>(
-            `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
-          );
-          console.log(response.data);
-          setQuotes(response.data);
-        } catch (err) {
-          console.log(err);
-        }
-      };
-      fetchQuotes();
-    }
+    const portfolioSymbols = portfolioData?.map(
+      (portfolio) => portfolio.symbol
+    );
+    const symbols = portfolioSymbols?.join(",");
+    const fetchQuotes = async () => {
+      try {
+        const response = await axios.get<Quote[]>(
+          `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
+        );
+        console.log(response.data);
+        setQuotes(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchQuotes();
   }, [portfolioData]);
+
+  const calculateTotals = () => {
+    let totalSecuritiesValue = 0;
+    let totalProfitLoss = 0;
+    if (portfolioData && quotes.length > 0) {
+      portfolioData.forEach((portfolio) => {
+        let currentQuote = quotes.find(
+          (quote) => quote.symbol === portfolio.symbol
+        );
+        if (currentQuote) {
+          let profitLoss =
+            (currentQuote.price - portfolio.purchasePrice) * portfolio.quantity;
+          totalSecuritiesValue += currentQuote.price * portfolio.quantity;
+          totalProfitLoss += profitLoss;
+        }
+      });
+    }
+    return [totalSecuritiesValue, totalProfitLoss];
+  };
+
+  const [totalSecuritiesValue, totalProfitLoss] = calculateTotals();
 
   return (
     <>
       <div className="portfolio-container">
         <h3>{userData.userName}'s Portfolio</h3>
-        {/* Todo */}
-        {/* <p>Total Cash Balance (USD): $</p>
-        <p>Total Securities Value (USD): $</p>
-        <p>Total Profit and Loss (USD): $</p> */}
+        <p>Total Cash Balance (USD): $</p>
+        <p>Total Securities Value (USD): ${totalSecuritiesValue}</p>
+        <p>Total Accumulated Profit and Loss (USD): ${totalProfitLoss}</p>
         <Table striped bordered hover>
           <thead>
             <tr>
