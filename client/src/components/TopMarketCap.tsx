@@ -37,7 +37,7 @@ const TopMarketCap: React.FC = () => {
           isEtf: false,
           isActivelyTrading: true,
           exchange: "NYSE,NASDAQ",
-          apikey: FINANCIAL_MODELING_API_KEY_2,
+          apikey: FINANCIAL_MODELING_API_KEY,
         },
       });
       if (response) {

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Trading" ADD COLUMN     "profitloss" DOUBLE PRECISION NOT NULL DEFAULT 0;

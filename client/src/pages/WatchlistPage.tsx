@@ -172,11 +172,7 @@ const WatchlistPage: React.FC = () => {
                       disabled={deleteLoading}
                       onClick={() => handleDelete(watchlist.symbol)}
                     >
-                      {deleteLoading ? (
-                        <ClipLoader size={20} color="#123abc" />
-                      ) : (
-                        <FontAwesomeIcon icon={faTrash} />
-                      )}
+                      <FontAwesomeIcon icon={faTrash} />
                     </button>
                   </td>
                 </tr>

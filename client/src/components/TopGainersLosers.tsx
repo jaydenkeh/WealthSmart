@@ -32,10 +32,10 @@ const TopGainersLosers: React.FC = () => {
     try {
       const [gainersResponse, losersResponse] = await axios.all([
         axios.get<Data[]>(
-          `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+          `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY}`
         ),
         axios.get<Data[]>(
-          `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY_2}`
+          `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY}`
         ),
       ]);
       if (gainersResponse && losersResponse) {

@@ -31,6 +31,7 @@ model Trading {
   symbol          String
   quantity        Int
   date            DateTime  @default(now())
+  profitloss      Float     @default(0)
   user            User      @relation("Trades", fields: [userEmail], references: [email])
   userEmail       String
 }
