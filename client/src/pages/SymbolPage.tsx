@@ -37,13 +37,6 @@ interface CompanyQuote {
   open: number;
   previousClose: number;
 }
-interface AccountValueData {
-  totalAssets: number;
-  totalSecuritiesValue: number;
-  cashBalance: number;
-  totalProfitLoss: number;
-  userEmail: string;
-}
 
 interface PortfolioData {
   id: number;
@@ -65,8 +58,6 @@ const SymbolPage: React.FC = () => {
   const [price, setPrice] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
   const [companyQuote, setCompanyQuote] = useState<CompanyQuote[]>([]);
-  const [accountValueData, setAccountValueData] =
-    useState<AccountValueData | null>(null);
   const [portfolioData, setPortfolioData] = useState<PortfolioData[]>([]);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
@@ -90,7 +81,6 @@ const SymbolPage: React.FC = () => {
   useEffect(() => {
     fetchCompanyQuote();
     checkWatchlist();
-    fetchUserAccountValue();
     fetchPortfolio();
   }, [userData]);
 
@@ -103,17 +93,6 @@ const SymbolPage: React.FC = () => {
         setCompanyQuote(response.data);
         setPrice(response.data[0].previousClose);
       }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const fetchUserAccountValue = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/accountvalue/${userData.email}`
-      );
-      setAccountValueData(response.data.accountValue);
     } catch (err) {
       console.log(err);
     }
@@ -200,39 +179,6 @@ const SymbolPage: React.FC = () => {
       });
       console.log(tradeResponse);
       if (tradeResponse.status === 201) {
-        if (postaction === "buy" && accountValueData) {
-          const totalSecurityValue = postprice * postquantity;
-          const accountValueResponse = await axios.put(
-            `http://localhost:3000/api/accountvalue/${userData.email}/`,
-            {
-              userEmail: userData.email,
-              totalAssets: accountValueData.totalAssets,
-              totalSecuritiesValue:
-                accountValueData.totalSecuritiesValue + totalSecurityValue,
-              cashBalance: accountValueData.cashBalance - totalSecurityValue,
-              totalProfitLoss: accountValueData.totalProfitLoss,
-            }
-          );
-        }
-        if (postaction === "sell" && accountValueData && portfolioData) {
-          console.log(portfolioData[0].purchasePrice);
-          const totalSecurityValue =
-            portfolioData[0].purchasePrice * postquantity;
-          const profitLoss = price - portfolioData[0].purchasePrice;
-          const accountValueResponse = await axios.put(
-            `http://localhost:3000/api/accountvalue/${userData.email}/`,
-            {
-              userEmail: userData.email,
-              totalAssets: accountValueData.totalAssets + profitLoss,
-              totalSecuritiesValue:
-                accountValueData.totalSecuritiesValue -
-                postquantity * postprice,
-              cashBalance:
-                accountValueData.cashBalance + totalSecurityValue + profitLoss,
-              totalProfitLoss: accountValueData.totalProfitLoss + profitLoss,
-            }
-          );
-        }
         setAction("buy");
         setPrice(companyQuote[0].previousClose);
         setMessage("Trade executed successfully");
