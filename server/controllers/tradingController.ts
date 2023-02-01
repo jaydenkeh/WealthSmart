@@ -22,8 +22,10 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
         },
       });
     } else {
+      // Calculation of profit or loss for sell order executed by user (not used for buy orders)
+      let profitorloss = price * quantity - portfolio.purchasePrice * quantity;
       if (action === "buy") {
-        // Update the existing portfolio for a buy
+        // Update the existing portfolio quantity for a buy order
         await prisma.portfolio.update({
           where: { id: portfolio.id },
           data: {
@@ -34,6 +36,16 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
               (portfolio.quantity + quantity),
           },
         });
+        const trade = await prisma.trading.create({
+          data: {
+            action: action,
+            price: price,
+            symbol: symbol,
+            quantity: quantity,
+            user: { connect: { email: userEmail } },
+          },
+        });
+        res.status(201).json({ message: "Trade successful", trade, portfolio });
       }
       if (action === "sell" && portfolio.quantity < quantity) {
         return res
@@ -47,24 +59,35 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
             quantity: portfolio.quantity - quantity,
           },
         });
+        const trade = await prisma.trading.create({
+          data: {
+            action: action,
+            price: price,
+            symbol: symbol,
+            quantity: quantity,
+            profitloss: profitorloss,
+            user: { connect: { email: userEmail } },
+          },
+        });
+        res.status(201).json({ message: "Trade successful", trade, portfolio });
       }
       if (action === "sell" && portfolio.quantity === quantity) {
         await prisma.portfolio.delete({
           where: { id: portfolio.id },
         });
+        const trade = await prisma.trading.create({
+          data: {
+            action: action,
+            price: price,
+            symbol: symbol,
+            quantity: quantity,
+            profitloss: profitorloss,
+            user: { connect: { email: userEmail } },
+          },
+        });
+        res.status(201).json({ message: "Trade successful", trade, portfolio });
       }
     }
-    // Create the trade for records
-    const trade = await prisma.trading.create({
-      data: {
-        action: action,
-        price: price,
-        symbol: symbol,
-        quantity: quantity,
-        user: { connect: { email: userEmail } },
-      },
-    });
-    res.status(201).json({ message: "Trade successful", trade, portfolio });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   } finally {
