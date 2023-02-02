@@ -1,16 +1,8 @@
 <a name="readme-top"></a>
 
-<!-- Insert Project Logo here -->
+![Wealth Smart banner](https://user-images.githubusercontent.com/113533303/216263693-668b96f0-8397-4bed-8026-4a80a07ca2ff.png)
 
 <br />
-<div align="center">
-<h3 align="center">Wealth Smart</h3>
-
-  <p align="center">
-    <em>financial web application with full CRUD functionality</em> 
-    <br />
-  </p>
-</div>
 
 ## Project Description
 
