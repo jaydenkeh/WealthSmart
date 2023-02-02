@@ -27,10 +27,8 @@ interface PortfolioData {
   userEmail: string;
 }
 interface AccountValueData {
-  totalAssets: number;
-  totalSecuritiesValue: number;
-  cashBalance: number;
-  totalProfitLoss: number;
+  totalCashBalance: number;
+  accumulatedProfitLoss: number;
   userEmail: string;
 }
 interface Quote {
@@ -68,7 +66,7 @@ const PortfolioPage: React.FC = () => {
 
   useEffect(() => {
     fetchPortfolio();
-    // fetchUserAccountValue();
+    fetchUserAccountValue();
   }, [userData]);
 
   const fetchPortfolio = async () => {
@@ -88,6 +86,7 @@ const PortfolioPage: React.FC = () => {
       const response = await axios.get(
         `http://localhost:3000/api/accountvalue/${userData.email}`
       );
+      console.log(response.data);
       setAccountValueData(response.data.accountValue);
     } catch (err) {
       console.log(err);
@@ -113,6 +112,7 @@ const PortfolioPage: React.FC = () => {
     fetchQuotes();
   }, [portfolioData]);
 
+  // function calculates the current total securities and profit&loss values for presentation purpose
   const calculateTotals = () => {
     let totalSecuritiesValue = 0;
     let totalProfitLoss = 0;
@@ -138,21 +138,29 @@ const PortfolioPage: React.FC = () => {
     <>
       <div className="portfolio-container">
         <h3>{userData.userName}'s Portfolio</h3>
-        <p>Total Cash Balance (USD): $</p>
-        <p>
-          Total Securities Value (USD): $
-          {totalSecuritiesValue
-            .toFixed(2)
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        </p>
-        <p>
-          Total Accumulated Profit and Loss (USD): $
-          {totalProfitLoss
-            .toFixed(2)
-            .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        </p>
+        <div className="portfolio-values">
+          <p>
+            Total Cash Balance (USD): $
+            {accountValueData?.totalCashBalance
+              .toFixed(2)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          </p>
+          <p>
+            Total Securities Value (USD): $
+            {totalSecuritiesValue
+              .toFixed(2)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          </p>
+          <p>
+            Total Accumulated Profit and Loss (USD): $
+            {(totalProfitLoss + (accountValueData?.accumulatedProfitLoss ?? 0))
+              .toFixed(2)
+              .toString()
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          </p>
+        </div>
         <Table striped bordered hover>
           <thead>
             <tr>
