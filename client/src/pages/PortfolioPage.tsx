@@ -139,8 +139,20 @@ const PortfolioPage: React.FC = () => {
       <div className="portfolio-container">
         <h3>{userData.userName}'s Portfolio</h3>
         <p>Total Cash Balance (USD): $</p>
-        <p>Total Securities Value (USD): ${totalSecuritiesValue}</p>
-        <p>Total Accumulated Profit and Loss (USD): ${totalProfitLoss}</p>
+        <p>
+          Total Securities Value (USD): $
+          {totalSecuritiesValue
+            .toFixed(2)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </p>
+        <p>
+          Total Accumulated Profit and Loss (USD): $
+          {totalProfitLoss
+            .toFixed(2)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+        </p>
         <Table striped bordered hover>
           <thead>
             <tr>

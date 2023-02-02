@@ -35,15 +35,15 @@ const NavigationBar: React.FC = () => {
                 <Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link>
               </Nav>
               {/* TODO future implementation */}
-              {/* <Form className="d-flex">
+              <Form className="d-flex">
                 <Form.Control
                   type="search"
-                  placeholder="Search"
+                  placeholder="Enter your search here"
                   className="me-2"
                   aria-label="Search"
                 />
                 <Button variant="outline-success">Search</Button>
-              </Form> */}
+              </Form>
             </Navbar.Collapse>
           </>
         ) : (
