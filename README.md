@@ -31,7 +31,7 @@ User existing holdings will be presented in the portfolio page
 User can add or delete ticker from their watchlist
 ![WealthSmart_WatchlistPage](https://user-images.githubusercontent.com/113533303/216253109-6fb140c0-e92b-4979-8c61-e450158dec78.png)
 
-### Technical Used
+## Technical Used
 
 For this project, I've used the following technologies:
 
