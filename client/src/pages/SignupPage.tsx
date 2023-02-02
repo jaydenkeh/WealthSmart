@@ -79,19 +79,9 @@ const SignupPage: React.FC = () => {
       );
       if (response.status === 201) {
         //make post request to accountValue route to set up user initial account balances
-        const initialAssetBalance = 100000;
-        const initialSecuritiesValue = 0;
-        const initialcashBalance = 100000;
-        const initialProfitLoss = 0;
         await axios.post(
           ACCOUNTVALUE_URL,
-          {
-            totalAssets: initialAssetBalance,
-            totalSecuritiesValue: initialSecuritiesValue,
-            cashBalance: initialcashBalance,
-            totalProfitLoss: initialProfitLoss,
-            userEmail: email,
-          },
+          { userEmail: email },
           {
             headers: { "Content-Type": "application/json" },
           }
