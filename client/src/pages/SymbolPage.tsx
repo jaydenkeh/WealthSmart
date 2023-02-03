@@ -38,14 +38,6 @@ interface CompanyQuote {
   previousClose: number;
 }
 
-interface PortfolioData {
-  id: number;
-  symbol: string;
-  quantity: number;
-  purchasePrice: number;
-  userEmail: string;
-}
-
 const SymbolPage: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -58,7 +50,6 @@ const SymbolPage: React.FC = () => {
   const [price, setPrice] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(0);
   const [companyQuote, setCompanyQuote] = useState<CompanyQuote[]>([]);
-  const [portfolioData, setPortfolioData] = useState<PortfolioData[]>([]);
   const [watchlistLoading, setWatchlistLoading] = useState(false);
   const [orderLoading, setOrderLoading] = useState(false);
   const [isAddedToWatchlist, setIsAddedToWatchlist] = useState(false);
@@ -81,7 +72,6 @@ const SymbolPage: React.FC = () => {
   useEffect(() => {
     fetchCompanyQuote();
     checkWatchlist();
-    fetchPortfolio();
   }, [userData, params.symbol]);
 
   const fetchCompanyQuote = async () => {
@@ -93,18 +83,6 @@ const SymbolPage: React.FC = () => {
         setCompanyQuote(response.data);
         setPrice(response.data[0].previousClose);
       }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const fetchPortfolio = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/api/portfolio/${userData.email}`
-      );
-      console.log(response.data.portfolio);
-      setPortfolioData(response.data.portfolio);
     } catch (err) {
       console.log(err);
     }
