@@ -4,8 +4,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { AuthContext } from "../context/AuthContext";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
+import SearchBar from "./SearchBar";
 
 const NavigationBar: React.FC = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
@@ -34,16 +33,7 @@ const NavigationBar: React.FC = () => {
                 <Nav.Link href="/watchlist">Watchlist</Nav.Link>
                 <Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link>
               </Nav>
-              {/* TODO future implementation */}
-              <Form className="d-flex">
-                <Form.Control
-                  type="search"
-                  placeholder="Enter your search here"
-                  className="me-2"
-                  aria-label="Search"
-                />
-                <Button variant="outline-success">Search</Button>
-              </Form>
+              <SearchBar />
             </Navbar.Collapse>
           </>
         ) : (

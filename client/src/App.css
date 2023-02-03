@@ -199,3 +199,21 @@
   right: 6%;
   top: 22%;
 }
+
+.search-results {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  margin-top: 50px;
+  z-index: 9999; /* high z-index value to bring the search results to front */
+}
+
+.single-search-result {
+  border-bottom: 1px solid #b8adad;
+  width: 320px;
+}
+
+.single-search-result:hover {
+  cursor: pointer;
+  background-color: #ffffe0;
+}

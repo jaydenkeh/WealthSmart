@@ -155,7 +155,6 @@ const TopGainersLosers: React.FC = () => {
           </Table>
         </div>
       </div>
-      ;
     </>
   );
 };
