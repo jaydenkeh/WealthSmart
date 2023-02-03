@@ -142,11 +142,11 @@ const TradeHistoryPage: React.FC = () => {
           ))}
           <Pagination.Next
             onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || currentPage === 1}
           />
           <Pagination.Last
             onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages}
+            disabled={currentPage === totalPages || currentPage === 1}
           />
         </Pagination>
       </div>

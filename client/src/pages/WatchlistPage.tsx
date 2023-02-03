@@ -8,6 +8,7 @@ import { Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Watchlist from "../assets/Watchlist.jpg";
+import { Pagination } from "react-bootstrap";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -49,6 +50,9 @@ const WatchlistPage: React.FC = () => {
   const [deleteLoading, setDeleteLoading] = useState<{
     [symbol: string]: boolean;
   }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 12;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -72,6 +76,9 @@ const WatchlistPage: React.FC = () => {
         );
         console.log(response.data.watchlist);
         setWatchlistData(response.data.watchlist);
+        setTotalPages(
+          Math.round(response.data.watchlist.length / itemsPerPage)
+        );
       } catch (err) {
         console.log(err);
       }
@@ -190,6 +197,33 @@ const WatchlistPage: React.FC = () => {
             )}
           </tbody>
         </Table>
+        <Pagination>
+          <Pagination.First
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+          />
+          <Pagination.Prev
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Pagination.Item
+              key={page}
+              active={page === currentPage}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages || currentPage === 1}
+          />
+          <Pagination.Last
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages || currentPage === 1}
+          />
+        </Pagination>
         <img src={Watchlist} className="watchlist-img" />
       </div>
     </>
