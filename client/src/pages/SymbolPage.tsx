@@ -82,7 +82,7 @@ const SymbolPage: React.FC = () => {
     fetchCompanyQuote();
     checkWatchlist();
     fetchPortfolio();
-  }, [userData]);
+  }, [userData, params.symbol]);
 
   const fetchCompanyQuote = async () => {
     try {
