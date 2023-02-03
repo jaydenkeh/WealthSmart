@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useContext, SyntheticEvent } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
 import { Table } from "react-bootstrap";
+import { Pagination } from "react-bootstrap";
 import axios from "axios";
 interface UserData {
   userName: string;
@@ -26,6 +27,9 @@ const TradeHistoryPage: React.FC = () => {
   });
   const navigate = useNavigate();
   const [historyData, setHistoryData] = useState<HistoryData[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 12;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,6 +52,9 @@ const TradeHistoryPage: React.FC = () => {
           `http://localhost:3000/api/trading/${userData.email}`
         );
         setHistoryData(response.data.tradingHistory);
+        setTotalPages(
+          Math.round(response.data.tradingHistory.length / itemsPerPage)
+        );
       } catch (err) {
         console.log(err);
       }
@@ -72,37 +79,42 @@ const TradeHistoryPage: React.FC = () => {
           </thead>
           <tbody>
             {isAuthenticated && historyData ? (
-              historyData.map((history, index) => (
-                <tr key={index}>
-                  <td>
-                    {new Date(history?.date).toLocaleDateString("en-GB", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })}
-                  </td>
-                  <td>
-                    {history?.action.charAt(0).toUpperCase() +
-                      history?.action.slice(1)}
-                  </td>
-                  <td>{history?.symbol}</td>
-                  <td>{history?.quantity}</td>
-                  <td>
-                    {history?.price
-                      .toFixed(2)
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </td>
-                  <td>
-                    {history.profitloss === 0
-                      ? "No profit or loss made"
-                      : history?.profitloss
-                          .toFixed(2)
-                          .toString()
-                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </td>
-                </tr>
-              ))
+              historyData
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage
+                )
+                .map((history, index) => (
+                  <tr key={index}>
+                    <td>
+                      {new Date(history?.date).toLocaleDateString("en-GB", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td>
+                      {history?.action.charAt(0).toUpperCase() +
+                        history?.action.slice(1)}
+                    </td>
+                    <td>{history?.symbol}</td>
+                    <td>{history?.quantity}</td>
+                    <td>
+                      {history?.price
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
+                    <td>
+                      {history.profitloss === 0
+                        ? "No profit or loss made"
+                        : history?.profitloss
+                            .toFixed(2)
+                            .toString()
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr>
                 <td colSpan={6}>Loading...</td>
@@ -110,6 +122,33 @@ const TradeHistoryPage: React.FC = () => {
             )}
           </tbody>
         </Table>
+        <Pagination>
+          <Pagination.First
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+          />
+          <Pagination.Prev
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <Pagination.Item
+              key={page}
+              active={page === currentPage}
+              onClick={() => setCurrentPage(page)}
+            >
+              {page}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          />
+          <Pagination.Last
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+          />
+        </Pagination>
       </div>
     </>
   );

@@ -27,7 +27,7 @@ const TopMarketCap: React.FC = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const itemsPerPage = 25;
+  const itemsPerPage = 20;
 
   const fetchMarket = async () => {
     try {
@@ -42,8 +42,7 @@ const TopMarketCap: React.FC = () => {
       });
       if (response) {
         setMarket(response.data);
-        console.log(response.data);
-        setTotalPages(Math.ceil(response.data.length / itemsPerPage));
+        setTotalPages(Math.round(response.data.length / itemsPerPage));
       }
     } catch (err) {
       console.log(err);
@@ -112,7 +111,10 @@ const TopMarketCap: React.FC = () => {
           </tbody>
         </Table>
         <Pagination>
-          <Pagination.First onClick={() => setCurrentPage(1)} />
+          <Pagination.First
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+          />
           <Pagination.Prev
             onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
@@ -126,8 +128,14 @@ const TopMarketCap: React.FC = () => {
               {page}
             </Pagination.Item>
           ))}
-          <Pagination.Next onClick={() => setCurrentPage(currentPage + 1)} />
-          <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
+          <Pagination.Next
+            onClick={() => setCurrentPage(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          />
+          <Pagination.Last
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+          />
         </Pagination>
       </div>
     </>
