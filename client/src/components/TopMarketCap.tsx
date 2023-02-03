@@ -113,7 +113,10 @@ const TopMarketCap: React.FC = () => {
         </Table>
         <Pagination>
           <Pagination.First onClick={() => setCurrentPage(1)} />
-          <Pagination.Prev onClick={() => setCurrentPage(currentPage - 1)} />
+          <Pagination.Prev
+            onClick={() => setCurrentPage(currentPage - 1)}
+            disabled={currentPage === 1}
+          />
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <Pagination.Item
               key={page}
