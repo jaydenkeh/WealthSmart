@@ -4,15 +4,21 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 
-const ALPHA_VANTAGE_API_KEY = import.meta.env.VITE_ALPHA_VANTAGE_API_KEY;
-
+const FINANCIAL_MODELING_API_KEY = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY;
+const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_2;
+const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_3;
+const FINANCIAL_MODELING_API_KEY_4 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_4;
 interface Ticker {
-  "1. symbol": string;
-  "2. name": string;
+  symbol: string;
+  name: string;
 }
 const SearchBar: React.FC = () => {
   const [searchText, setSearchText] = useState("");
-  const [tickers, setTickers] = useState([]);
+  const [tickers, setTickers] = useState<Ticker[]>([]);
   const navigate = useNavigate();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,9 +32,10 @@ const SearchBar: React.FC = () => {
       }
       try {
         const response = await axios.get(
-          `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${searchText}&apikey=${ALPHA_VANTAGE_API_KEY}`
+          `https://financialmodelingprep.com/api/v3/search?query=${searchText}&limit=7&exchange=NASDAQ,NYSE&apikey=${FINANCIAL_MODELING_API_KEY}`
         );
-        setTickers(response.data.bestMatches);
+        console.log(response.data);
+        setTickers(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -37,7 +44,7 @@ const SearchBar: React.FC = () => {
   }, [searchText]);
 
   const handleClick = (ticker: Ticker) => {
-    navigate(`/symbol/${ticker["1. symbol"]}`);
+    navigate(`/symbol/${ticker.symbol}`);
     setSearchText("");
   };
 
@@ -57,13 +64,13 @@ const SearchBar: React.FC = () => {
         </Form>
         <div className="search-results">
           {searchText.length > 0
-            ? tickers.slice(0, 5).map((ticker) => (
+            ? tickers.map((ticker) => (
                 <div
-                  key={ticker["1. symbol"]}
+                  key={ticker.symbol}
                   className="single-search-result"
                   onClick={() => handleClick(ticker)}
                 >
-                  {ticker["2. name"]}
+                  {ticker.name}
                 </div>
               ))
             : null}
