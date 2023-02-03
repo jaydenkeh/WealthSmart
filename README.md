@@ -47,6 +47,7 @@ For this project, I've used the following technologies:
 - [x] Setup largest companies by market capitalization component and inserted to main dashboard
 - [x] Setup Symbol page for paper trading
 - [x] Setup server routers: signupRouter, loginRouter
+- [x] Implement Search Bar functionality to fetch search results from API and redirect users to Symbol page upon clicking the ticker
 
 ## API Used
 
