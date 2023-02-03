@@ -46,7 +46,9 @@ const WatchlistPage: React.FC = () => {
     null
   );
   const [quotes, setQuotes] = useState<Quote[]>([]);
-  const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState<{
+    [symbol: string]: boolean;
+  }>({});
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -99,7 +101,7 @@ const WatchlistPage: React.FC = () => {
   }, [watchlistData]);
 
   const handleDelete = async (symbol: string) => {
-    setDeleteLoading(true);
+    setDeleteLoading({ ...deleteLoading, [symbol]: true });
     try {
       const response = await axios.delete(
         `http://localhost:3000/api/watchlist/${userData.email}/${symbol}`
@@ -114,7 +116,7 @@ const WatchlistPage: React.FC = () => {
     } catch (err) {
       console.log(err);
     } finally {
-      setDeleteLoading(false);
+      setDeleteLoading({ ...deleteLoading, [symbol]: false });
     }
   };
 
@@ -142,7 +144,7 @@ const WatchlistPage: React.FC = () => {
                     {" "}
                     <span
                       className="watchlist-symbol-button"
-                      onClick={() => navigate(`/symbol/${watchlist.symbol}`)}
+                      onClick={() => navigate(`/symbol/${watchlist?.symbol}`)}
                     >
                       {watchlist?.symbol}
                     </span>
@@ -169,10 +171,14 @@ const WatchlistPage: React.FC = () => {
                   </td>
                   <td>
                     <button
-                      disabled={deleteLoading}
-                      onClick={() => handleDelete(watchlist.symbol)}
+                      disabled={deleteLoading[watchlist?.symbol]}
+                      onClick={() => handleDelete(watchlist?.symbol)}
                     >
-                      <FontAwesomeIcon icon={faTrash} />
+                      {deleteLoading[watchlist?.symbol] ? (
+                        <ClipLoader size={20} color="#123abc" />
+                      ) : (
+                        <FontAwesomeIcon icon={faTrash} />
+                      )}
                     </button>
                   </td>
                 </tr>
