@@ -31,6 +31,7 @@ const NavigationBar: React.FC = () => {
               >
                 <Nav.Link href="/portfolio">Investment Portfolio</Nav.Link>
                 <Nav.Link href="/watchlist">Watchlist</Nav.Link>
+                <Nav.Link href="/trading-history">Trading History</Nav.Link>
                 <Nav.Link onClick={() => handleLogout()}>Logout</Nav.Link>
               </Nav>
               <SearchBar />

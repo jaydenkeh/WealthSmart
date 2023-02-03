@@ -187,7 +187,8 @@
 }
 
 .portfolio-container,
-.watchlist-container {
+.watchlist-container,
+.trading-history-container {
   padding: 26px 20px 0 20px;
   width: 60%;
 }

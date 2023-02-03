@@ -28,7 +28,7 @@ function App() {
           <Route path="/symbol/:symbol" element={<SymbolPage />} />
           <Route path="/portfolio" element={<PortfolioPage />} />
           <Route path="/watchlist" element={<WatchlistPage />} />
-          <Route path="/trade-history" element={<TradeHistoryPage />} />
+          <Route path="/trading-history" element={<TradeHistoryPage />} />
           <Route
             path="*"
             element={<p>The page you are searching is not found</p>}

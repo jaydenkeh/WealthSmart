@@ -139,4 +139,23 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
   }
 });
 
+tradingRouter.get("/:email", async (req: Request, res: Response) => {
+  try {
+    const email = req.params.email;
+    const tradingHistory = await prisma.trading.findMany({
+      where: {
+        AND: [{ userEmail: email }],
+      },
+    });
+    if (!tradingHistory) {
+      return res.status(404).json({ message: "trading history not found" });
+    }
+    res.status(200).json({ tradingHistory });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
 export { tradingRouter };
