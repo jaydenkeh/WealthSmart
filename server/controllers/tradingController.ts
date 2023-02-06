@@ -24,113 +24,107 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
           user: { connect: { email: userEmail } },
         },
       });
-    } else {
-      // Calculation of profit or loss for sell order executed by user (not used for buy orders)
-      let profitorloss = price * quantity - portfolio.purchasePrice * quantity;
-      if (action === "buy" && accountValue) {
-        // Update the existing portfolio quantity for a buy order
-        await prisma.portfolio.update({
-          where: { id: portfolio.id },
-          data: {
-            quantity: portfolio.quantity + quantity,
-            purchasePrice:
-              (portfolio.purchasePrice * portfolio.quantity +
-                price * quantity) /
-              (portfolio.quantity + quantity),
-          },
-        });
-        const trade = await prisma.trading.create({
-          data: {
-            action: action,
-            price: price,
-            symbol: symbol,
-            quantity: quantity,
-            user: { connect: { email: userEmail } },
-          },
-        });
-        const updatedAccountBalances = await prisma.accountValue.update({
-          where: { id: accountValue.id },
-          data: {
-            totalCashBalance: accountValue.totalCashBalance - price * quantity,
-          },
-        });
-        res.status(201).json({
-          message: "Trade successful",
-          trade,
-          portfolio,
-          updatedAccountBalances,
-        });
-      }
-      if (action === "sell" && portfolio.quantity < quantity) {
-        return res
-          .status(400)
-          .json({ message: "You do not have enough shares to sell" });
-      }
-      if (action === "sell" && portfolio.quantity >= quantity && accountValue) {
-        await prisma.portfolio.update({
-          where: { id: portfolio.id },
-          data: {
-            quantity: portfolio.quantity - quantity,
-          },
-        });
-        const trade = await prisma.trading.create({
-          data: {
-            action: action,
-            price: price,
-            symbol: symbol,
-            quantity: quantity,
-            profitloss: profitorloss,
-            user: { connect: { email: userEmail } },
-          },
-        });
-        const updatedAccountBalances = await prisma.accountValue.update({
-          where: { id: accountValue.id },
-          data: {
-            totalCashBalance: accountValue.totalCashBalance + price * quantity,
-            accumulatedProfitLoss:
-              accountValue.accumulatedProfitLoss + profitorloss,
-          },
-        });
-        res.status(201).json({
-          message: "Trade successful",
-          trade,
-          portfolio,
-          updatedAccountBalances,
-        });
-      }
-      if (
-        action === "sell" &&
-        portfolio.quantity === quantity &&
-        accountValue
-      ) {
-        await prisma.portfolio.delete({
-          where: { id: portfolio.id },
-        });
-        const trade = await prisma.trading.create({
-          data: {
-            action: action,
-            price: price,
-            symbol: symbol,
-            quantity: quantity,
-            profitloss: profitorloss,
-            user: { connect: { email: userEmail } },
-          },
-        });
-        const updatedAccountBalances = await prisma.accountValue.update({
-          where: { id: accountValue.id },
-          data: {
-            totalCashBalance: accountValue.totalCashBalance + price * quantity,
-            accumulatedProfitLoss:
-              accountValue.accumulatedProfitLoss + profitorloss,
-          },
-        });
-        res.status(201).json({
-          message: "Trade successful",
-          trade,
-          portfolio,
-          updatedAccountBalances,
-        });
-      }
+    }
+    // Calculation of profit or loss for sell order executed by user (not used for buy orders)
+    let profitorloss = price * quantity - portfolio.purchasePrice * quantity;
+    if (action === "buy" && portfolio && accountValue) {
+      // Update the existing portfolio quantity for a buy order
+      await prisma.portfolio.update({
+        where: { id: portfolio.id },
+        data: {
+          quantity: portfolio.quantity + quantity,
+          purchasePrice:
+            (portfolio.purchasePrice * portfolio.quantity + price * quantity) /
+            (portfolio.quantity + quantity),
+        },
+      });
+      const trade = await prisma.trading.create({
+        data: {
+          action: action,
+          price: price,
+          symbol: symbol,
+          quantity: quantity,
+          user: { connect: { email: userEmail } },
+        },
+      });
+      const updatedAccountBalances = await prisma.accountValue.update({
+        where: { id: accountValue.id },
+        data: {
+          totalCashBalance: accountValue.totalCashBalance - price * quantity,
+        },
+      });
+      res.status(201).json({
+        message: "Trade successful",
+        trade,
+        portfolio,
+        updatedAccountBalances,
+      });
+    }
+    if (action === "sell" && portfolio.quantity < quantity) {
+      return res
+        .status(400)
+        .json({ message: "You do not have enough shares to sell" });
+    }
+    if (action === "sell" && portfolio.quantity >= quantity && accountValue) {
+      await prisma.portfolio.update({
+        where: { id: portfolio.id },
+        data: {
+          quantity: portfolio.quantity - quantity,
+        },
+      });
+      const trade = await prisma.trading.create({
+        data: {
+          action: action,
+          price: price,
+          symbol: symbol,
+          quantity: quantity,
+          profitloss: profitorloss,
+          user: { connect: { email: userEmail } },
+        },
+      });
+      const updatedAccountBalances = await prisma.accountValue.update({
+        where: { id: accountValue.id },
+        data: {
+          totalCashBalance: accountValue.totalCashBalance + price * quantity,
+          accumulatedProfitLoss:
+            accountValue.accumulatedProfitLoss + profitorloss,
+        },
+      });
+      res.status(201).json({
+        message: "Trade successful",
+        trade,
+        portfolio,
+        updatedAccountBalances,
+      });
+    }
+    if (action === "sell" && portfolio.quantity === quantity && accountValue) {
+      await prisma.portfolio.delete({
+        where: { id: portfolio.id },
+      });
+      const trade = await prisma.trading.create({
+        data: {
+          action: action,
+          price: price,
+          symbol: symbol,
+          quantity: quantity,
+          profitloss: profitorloss,
+          user: { connect: { email: userEmail } },
+        },
+      });
+      const updatedAccountBalances = await prisma.accountValue.update({
+        where: { id: accountValue.id },
+        data: {
+          totalCashBalance: accountValue.totalCashBalance + price * quantity,
+          accumulatedProfitLoss:
+            accountValue.accumulatedProfitLoss + profitorloss,
+        },
+      });
+      res.status(201).json({
+        message: "Trade successful",
+        trade,
+        portfolio,
+        updatedAccountBalances,
+      });
     }
   } catch (err: any) {
     res.status(500).json({ error: err.message });
