@@ -8,6 +8,9 @@ import Form from "react-bootstrap/Form";
 import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
 import Chart from "../components/Chart";
+import Alert from "react-bootstrap/Alert";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -169,11 +172,17 @@ const SymbolPage: React.FC = () => {
         setAction("buy");
         setPrice(companyQuote[0].previousClose);
         setMessage("Trade executed successfully");
+        setTimeout(() => {
+          setMessage("");
+        }, 4500);
       }
     } catch (err: any) {
       console.log(err);
       if (err.response.status === 400) {
         setMessage(err.response.data.message);
+        setTimeout(() => {
+          setMessage("");
+        }, 4500);
       }
     } finally {
       setOrderLoading(false);
@@ -278,7 +287,7 @@ const SymbolPage: React.FC = () => {
       ) : null}
       <Chart symbol={companyQuote[0]?.symbol} name={companyQuote[0]?.name} />
       <br />
-      {message}
+
       <div className="trading-form-container">
         <h5>Place Trade</h5>
         <Form onSubmit={handleOrder}>
@@ -301,6 +310,7 @@ const SymbolPage: React.FC = () => {
               step=".01"
               min="0"
               name="price"
+              placeholder="Set Your Price"
               value={price}
               onChange={(e) => setPrice(Number(e.currentTarget.value))}
             />
@@ -325,6 +335,13 @@ const SymbolPage: React.FC = () => {
             )}
           </Button>
         </Form>
+        {message ? (
+          <div className="alert-message-container">
+            <Alert key="info" variant="info" className="col-2">
+              <FontAwesomeIcon icon={faInfoCircle} /> {message}
+            </Alert>
+          </div>
+        ) : null}
       </div>
     </>
   );
