@@ -41,8 +41,6 @@ const TopGainersLosers: React.FC = () => {
       if (gainersResponse && losersResponse) {
         setGainers(gainersResponse.data);
         setLosers(losersResponse.data);
-        console.log(gainersResponse.data);
-        console.log(losersResponse.data);
       }
     } catch (err) {
       console.log(err);
