@@ -93,4 +93,8 @@ Project is built with the following technologies:
 
 - https://github.com/jaydenkeh
 
+## License
+
+This project is licensed under the terms of the [MIT License](LICENSE).
+
 <p align="left">(<a href="#readme-top">back to top</a>)</p>
