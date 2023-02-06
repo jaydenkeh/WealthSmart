@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, SyntheticEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ClipLoader } from "react-spinners";
+import { SyncLoader } from "react-spinners";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { UserAuth } from "../functions/UserAuth";
@@ -41,7 +42,8 @@ interface CompanyQuote {
 const SymbolPage: React.FC = () => {
   const navigate = useNavigate();
   const params = useParams();
-  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, setIsAuthenticated, setIsLoading } =
+    useContext(AuthContext);
   const [userData, setUserData] = useState<UserData>({
     userName: "",
     email: "",
@@ -54,6 +56,13 @@ const SymbolPage: React.FC = () => {
   const [orderLoading, setOrderLoading] = useState(false);
   const [isAddedToWatchlist, setIsAddedToWatchlist] = useState(false);
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -188,7 +197,7 @@ const SymbolPage: React.FC = () => {
             }
           >
             {watchlistLoading ? (
-              <ClipLoader size={20} color="#123abc" />
+              <SyncLoader size={8} color="#123abc" />
             ) : isAddedToWatchlist ? (
               "Remove from Watchlist"
             ) : (

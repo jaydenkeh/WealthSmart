@@ -5,8 +5,15 @@ import { UserAuth } from "../functions/UserAuth";
 import { AuthContext } from "../context/AuthContext";
 
 const HomePage: React.FC = () => {
-  const { setIsAuthenticated } = useContext(AuthContext);
+  const { setIsAuthenticated, setIsLoading } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {

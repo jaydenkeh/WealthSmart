@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import NavigationBar from "./components/NavigationBar";
 import { AuthContextProvider } from "./context/AuthContext";
+import { ClimbingBoxLoader } from "react-spinners";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import HomePage from "./pages/HomePage";
@@ -20,20 +21,34 @@ function App() {
       value={{ isAuthenticated, setIsAuthenticated, isLoading, setIsLoading }}
     >
       <div className="App">
-        <NavigationBar />
-        <Routes>
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<HomePage />} />
-          <Route path="/symbol/:symbol" element={<SymbolPage />} />
-          <Route path="/portfolio" element={<PortfolioPage />} />
-          <Route path="/watchlist" element={<WatchlistPage />} />
-          <Route path="/trading-history" element={<TradeHistoryPage />} />
-          <Route
-            path="*"
-            element={<p>The page you are searching is not found</p>}
-          />
-        </Routes>
+        {isLoading ? (
+          <>
+            <div className="loader-container">
+              <ClimbingBoxLoader
+                size={30}
+                color={"#48c91e"}
+                loading={isLoading}
+              />
+            </div>
+          </>
+        ) : (
+          <>
+            <NavigationBar />
+            <Routes>
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/" element={<HomePage />} />
+              <Route path="/symbol/:symbol" element={<SymbolPage />} />
+              <Route path="/portfolio" element={<PortfolioPage />} />
+              <Route path="/watchlist" element={<WatchlistPage />} />
+              <Route path="/trading-history" element={<TradeHistoryPage />} />
+              <Route
+                path="*"
+                element={<p>The page you are searching is not found</p>}
+              />
+            </Routes>
+          </>
+        )}
       </div>
     </AuthContextProvider>
   );

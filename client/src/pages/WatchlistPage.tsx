@@ -38,7 +38,8 @@ interface Quote {
 
 const WatchlistPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, setIsAuthenticated, setIsLoading } =
+    useContext(AuthContext);
   const [userData, setUserData] = useState<UserData>({
     userName: "",
     email: "",
@@ -53,6 +54,13 @@ const WatchlistPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 12;
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -94,7 +102,6 @@ const WatchlistPage: React.FC = () => {
           const response = await axios.get<Quote[]>(
             `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
           );
-          console.log(response.data);
           setQuotes(response.data);
         } catch (err) {
           console.log(err);
@@ -141,7 +148,7 @@ const WatchlistPage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {isAuthenticated ? (
+            {isAuthenticated && quotes ? (
               quotes
                 .slice(
                   (currentPage - 1) * itemsPerPage,

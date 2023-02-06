@@ -39,7 +39,8 @@ interface Quote {
 
 const PortfolioPage: React.FC = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, setIsAuthenticated, setIsLoading } =
+    useContext(AuthContext);
   const [userData, setUserData] = useState<UserData>({
     userName: "",
     email: "",
@@ -53,6 +54,13 @@ const PortfolioPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const itemsPerPage = 12;
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+  }, []);
 
   useEffect(() => {
     const checkAuth = async () => {
