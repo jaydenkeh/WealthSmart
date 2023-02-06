@@ -53,8 +53,9 @@ const TradeHistoryPage: React.FC = () => {
         );
         setHistoryData(response.data.tradingHistory);
         setTotalPages(
-          Math.round(response.data.tradingHistory.length / itemsPerPage)
+          Math.ceil(response.data.tradingHistory.length / itemsPerPage)
         );
+        console.log(response.data);
       } catch (err) {
         console.log(err);
       }
@@ -122,33 +123,35 @@ const TradeHistoryPage: React.FC = () => {
             )}
           </tbody>
         </Table>
-        <Pagination>
-          <Pagination.First
-            onClick={() => setCurrentPage(1)}
-            disabled={currentPage === 1}
-          />
-          <Pagination.Prev
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          />
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <Pagination.Item
-              key={page}
-              active={page === currentPage}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages || currentPage === 1}
-          />
-          <Pagination.Last
-            onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages || currentPage === 1}
-          />
-        </Pagination>
+        {totalPages != 1 ? (
+          <Pagination>
+            <Pagination.First
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            />
+            <Pagination.Prev
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Pagination.Item
+                key={page}
+                active={page === currentPage}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            />
+            <Pagination.Last
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+            />
+          </Pagination>
+        ) : null}
       </div>
     </>
   );
