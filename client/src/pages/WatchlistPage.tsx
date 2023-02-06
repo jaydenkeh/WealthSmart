@@ -76,9 +76,7 @@ const WatchlistPage: React.FC = () => {
         );
         console.log(response.data.watchlist);
         setWatchlistData(response.data.watchlist);
-        setTotalPages(
-          Math.round(response.data.watchlist.length / itemsPerPage)
-        );
+        setTotalPages(Math.ceil(response.data.watchlist.length / itemsPerPage));
       } catch (err) {
         console.log(err);
       }
@@ -197,33 +195,35 @@ const WatchlistPage: React.FC = () => {
             )}
           </tbody>
         </Table>
-        <Pagination>
-          <Pagination.First
-            onClick={() => setCurrentPage(1)}
-            disabled={currentPage === 1}
-          />
-          <Pagination.Prev
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          />
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <Pagination.Item
-              key={page}
-              active={page === currentPage}
-              onClick={() => setCurrentPage(page)}
-            >
-              {page}
-            </Pagination.Item>
-          ))}
-          <Pagination.Next
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages || currentPage === 1}
-          />
-          <Pagination.Last
-            onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages || currentPage === 1}
-          />
-        </Pagination>
+        {totalPages != 1 ? (
+          <Pagination>
+            <Pagination.First
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            />
+            <Pagination.Prev
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Pagination.Item
+                key={page}
+                active={page === currentPage}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            />
+            <Pagination.Last
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+            />
+          </Pagination>
+        ) : null}
         <img src={Watchlist} className="watchlist-img" />
       </div>
     </>
