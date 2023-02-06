@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import { Table } from "react-bootstrap";
 import { Pagination } from "react-bootstrap";
 import axios from "axios";
+import TradeHistory from "../assets/TradeHistory.jpg";
 interface UserData {
   userName: string;
   email: string;
@@ -159,6 +160,8 @@ const TradeHistoryPage: React.FC = () => {
             />
           </Pagination>
         ) : null}
+
+        <img src={TradeHistory} className="trade-history-img" />
       </div>
     </>
   );

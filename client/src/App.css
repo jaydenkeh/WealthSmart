@@ -194,7 +194,8 @@
 }
 
 .portfolio-img,
-.watchlist-img {
+.watchlist-img,
+.trade-history-img {
   width: 30%;
   position: absolute;
   right: 6%;
