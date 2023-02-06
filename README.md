@@ -25,29 +25,65 @@ User can add or delete ticker from their watchlist
 
 ## Technical Used
 
-For this project, I've used the following technologies:
+Project is built with the following technologies:
 
 - TypeScript
 - React
-- React Bootstrap (for Frontend CSS)
-- Fontawesome (for icons)
-- highcharts (to plot the candlesticks chart)
-- Vite
+- React Bootstrap
+- Fontawesome
+- highcharts
 - PostgreSQL
 - Prisma
 - ExpressJS
 - JWT
-- bcrypt (for password hashing)
+- bcrypt
+- Axios
 
 ## Planning and Development Process
 
-- [x] Setup Signup and Login pages with React Boostrap and Fontawesome
-- [x] Setup Home page with navigation bar and main dashboard components
-- [x] Setup U.S. stocks market daily top gainers and losers component and inserted to main dashboard
-- [x] Setup largest companies by market capitalization component and inserted to main dashboard
-- [x] Setup Symbol page for paper trading
-- [x] Setup server routers: signupRouter, loginRouter
-- [x] Implement Search Bar functionality to fetch search results from API and redirect users to Symbol page upon clicking the ticker
+- [x] Client
+
+  - Signup and Login pages set up with JWT authentication
+  - Home page and main dashboard (TopMarketCap & TopGainersLosers)
+  - Navigation Bar
+  - Symbol Page:
+    - Chart component plotting daily candlesticks over one year period
+    - Paper trading form logic to allow buy/sell order execution
+    - Symbol quote information
+    - Add to/remove from watchlist logic
+  - Portfolio Page:
+    - User portfolio table
+    - User account values (Total Cash Balance, Total Securities Value, Total Accumulated Profit/Loss)
+  - Trade History Page
+  - Watchlist Page
+    - Remove from watchlist button & logic
+  - Search bar logic
+    - Ping API to fetch results and redirect user to Symbol Page upon clicking ticker
+  - Pagination (TopMarketCap, PortfolioPage, TradeHistoryPage, WatchlistPage)
+  - Loader in App.tsx
+
+- [x] Server
+
+  - POST Endpoints
+    - Signup (password hashing with bcrypt)
+    - Login (JWT authentication)
+    - Trading (handle paper trading orders)
+    - Portfolio creation when user execute buy order for the first time for new ticker
+    - Add to watchlist
+    - Account value balances of user created upon initial sign up
+  - GET Endpoints
+    - checkAuth (for protecting routes in frontend)
+    - Get user porfolio records
+    - Get user trading history
+    - Get user watchlist
+  - PUT Endpoints
+    - Update user portfolio records when user execute buy or sell order
+    - Update user account value balances when a buy or sell order is executed
+  - DELETE Endpoints
+    - Delete user portfolio records when quantity sold equals current quantity holding
+    - Delete from watchlist
+  - Prisma and PostgreSQL database setup
+    - Models
 
 ## API Used
 
