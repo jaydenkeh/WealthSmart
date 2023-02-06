@@ -74,7 +74,6 @@ const WatchlistPage: React.FC = () => {
         const response = await axios.get(
           `http://localhost:3000/api/watchlist/${userData.email}`
         );
-        console.log(response.data.watchlist);
         setWatchlistData(response.data.watchlist);
         setTotalPages(Math.ceil(response.data.watchlist.length / itemsPerPage));
       } catch (err) {
@@ -143,51 +142,56 @@ const WatchlistPage: React.FC = () => {
           </thead>
           <tbody>
             {isAuthenticated ? (
-              quotes.map((watchlist, index) => (
-                <tr key={index}>
-                  <td>
-                    {" "}
-                    <span
-                      className="watchlist-symbol-button"
-                      onClick={() => navigate(`/symbol/${watchlist?.symbol}`)}
-                    >
-                      {watchlist?.symbol}
-                    </span>
-                  </td>
-                  <td>{watchlist?.name}</td>
-                  <td>{watchlist?.price}</td>
-                  <td>
-                    {watchlist?.change
-                      .toFixed(2)
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </td>
-                  <td>
-                    {watchlist?.changesPercentage
-                      .toFixed(2)
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    %
-                  </td>
-                  <td>
-                    {watchlist?.volume
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                  </td>
-                  <td>
-                    <button
-                      disabled={deleteLoading[watchlist?.symbol]}
-                      onClick={() => handleDelete(watchlist?.symbol)}
-                    >
-                      {deleteLoading[watchlist?.symbol] ? (
-                        <ClipLoader size={20} color="#123abc" />
-                      ) : (
-                        <FontAwesomeIcon icon={faTrash} />
-                      )}
-                    </button>
-                  </td>
-                </tr>
-              ))
+              quotes
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage
+                )
+                .map((watchlist, index) => (
+                  <tr key={index}>
+                    <td>
+                      {" "}
+                      <span
+                        className="watchlist-symbol-button"
+                        onClick={() => navigate(`/symbol/${watchlist?.symbol}`)}
+                      >
+                        {watchlist?.symbol}
+                      </span>
+                    </td>
+                    <td>{watchlist?.name}</td>
+                    <td>{watchlist?.price}</td>
+                    <td>
+                      {watchlist?.change
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
+                    <td>
+                      {watchlist?.changesPercentage
+                        .toFixed(2)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      %
+                    </td>
+                    <td>
+                      {watchlist?.volume
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                    </td>
+                    <td>
+                      <button
+                        disabled={deleteLoading[watchlist?.symbol]}
+                        onClick={() => handleDelete(watchlist?.symbol)}
+                      >
+                        {deleteLoading[watchlist?.symbol] ? (
+                          <ClipLoader size={20} color="#123abc" />
+                        ) : (
+                          <FontAwesomeIcon icon={faTrash} />
+                        )}
+                      </button>
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr>
                 <td colSpan={7}>Loading...</td>
