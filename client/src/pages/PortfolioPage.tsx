@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext";
 import { Table } from "react-bootstrap";
 import axios from "axios";
 import Portfolio from "../assets/Portfolio.jpg";
+import { Pagination } from "react-bootstrap";
 
 const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
@@ -49,6 +50,9 @@ const PortfolioPage: React.FC = () => {
   const [accountValueData, setAccountValueData] =
     useState<AccountValueData | null>(null);
   const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 12;
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -74,8 +78,8 @@ const PortfolioPage: React.FC = () => {
       const response = await axios.get(
         `http://localhost:3000/api/portfolio/${userData.email}`
       );
-      console.log(response.data.portfolio);
       setPortfolioData(response.data.portfolio);
+      setTotalPages(Math.ceil(response.data.portfolio.length / itemsPerPage));
     } catch (err) {
       console.log(err);
     }
@@ -86,7 +90,6 @@ const PortfolioPage: React.FC = () => {
       const response = await axios.get(
         `http://localhost:3000/api/accountvalue/${userData.email}`
       );
-      console.log(response.data);
       setAccountValueData(response.data.accountValue);
     } catch (err) {
       console.log(err);
@@ -103,7 +106,6 @@ const PortfolioPage: React.FC = () => {
         const response = await axios.get<Quote[]>(
           `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
         );
-        console.log(response.data);
         setQuotes(response.data);
       } catch (err) {
         console.log(err);
@@ -173,55 +175,62 @@ const PortfolioPage: React.FC = () => {
           </thead>
           <tbody>
             {isAuthenticated && portfolioData ? (
-              portfolioData.map((portfolio, index) => {
-                let profitLoss = 0;
-                if (quotes && quotes.length > 0) {
-                  let currentQuote = quotes.find(
-                    (quote) => quote.symbol === portfolio.symbol
-                  );
-                  if (currentQuote) {
-                    profitLoss =
-                      (currentQuote.price - portfolio.purchasePrice) *
-                      portfolio.quantity;
+              portfolioData
+                .slice(
+                  (currentPage - 1) * itemsPerPage,
+                  currentPage * itemsPerPage
+                )
+                .map((portfolio, index) => {
+                  let profitLoss = 0;
+                  if (quotes && quotes.length > 0) {
+                    let currentQuote = quotes.find(
+                      (quote) => quote.symbol === portfolio.symbol
+                    );
+                    if (currentQuote) {
+                      profitLoss =
+                        (currentQuote.price - portfolio.purchasePrice) *
+                        portfolio.quantity;
+                    }
                   }
-                }
-                let securityValue =
-                  portfolio.purchasePrice * portfolio.quantity + profitLoss;
-                return (
-                  <tr key={index}>
-                    <td>
-                      <span
-                        className="portfolio-symbol-button"
-                        onClick={() => navigate(`/symbol/${portfolio.symbol}`)}
-                      >
-                        {portfolio?.symbol}
-                      </span>
-                    </td>
-                    <td>{portfolio?.quantity}</td>
-                    <td>
-                      $
-                      {portfolio?.purchasePrice
-                        .toFixed(2)
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    </td>
-                    <td>
-                      $
-                      {securityValue
-                        .toFixed(2)
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    </td>
-                    <td>
-                      $
-                      {profitLoss
-                        .toFixed(2)
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    </td>
-                  </tr>
-                );
-              })
+                  let securityValue =
+                    portfolio.purchasePrice * portfolio.quantity + profitLoss;
+                  return (
+                    <tr key={index}>
+                      <td>
+                        <span
+                          className="portfolio-symbol-button"
+                          onClick={() =>
+                            navigate(`/symbol/${portfolio.symbol}`)
+                          }
+                        >
+                          {portfolio?.symbol}
+                        </span>
+                      </td>
+                      <td>{portfolio?.quantity}</td>
+                      <td>
+                        $
+                        {portfolio?.purchasePrice
+                          .toFixed(2)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      </td>
+                      <td>
+                        $
+                        {securityValue
+                          .toFixed(2)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      </td>
+                      <td>
+                        $
+                        {profitLoss
+                          .toFixed(2)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                      </td>
+                    </tr>
+                  );
+                })
             ) : (
               <tr>
                 <td colSpan={5}>Loading...</td>
@@ -229,6 +238,35 @@ const PortfolioPage: React.FC = () => {
             )}
           </tbody>
         </Table>
+        {totalPages != 1 ? (
+          <Pagination>
+            <Pagination.First
+              onClick={() => setCurrentPage(1)}
+              disabled={currentPage === 1}
+            />
+            <Pagination.Prev
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Pagination.Item
+                key={page}
+                active={page === currentPage}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </Pagination.Item>
+            ))}
+            <Pagination.Next
+              onClick={() => setCurrentPage(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            />
+            <Pagination.Last
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+            />
+          </Pagination>
+        ) : null}
         <img src={Portfolio} className="portfolio-img" />
       </div>
     </>
