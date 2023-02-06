@@ -55,7 +55,6 @@ const TradeHistoryPage: React.FC = () => {
         setTotalPages(
           Math.ceil(response.data.tradingHistory.length / itemsPerPage)
         );
-        console.log(response.data);
       } catch (err) {
         console.log(err);
       }
