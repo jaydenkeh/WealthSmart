@@ -10,6 +10,8 @@ Wealth Smart is a full stack web application built with TypeScript, React, Expre
 
 ## Snippets
 
+![](https://github.com/jaydenkeh/WeathSmart/client/public/WealthSmart-SignupLogin-demo.gif)
+
 Main page upon successful login, user will be able to view the largest companies by market cap and top gainers/losers (of the day) of the U.S market. Data presented is real-time and obtained from Financial Modeling Prep API
 ![WealthSmart_MainPage](https://user-images.githubusercontent.com/113533303/216250885-ba9cd5ed-0908-425f-924c-d9dd18147d26.png)
 ![WealthSmart_MainPage_2](https://user-images.githubusercontent.com/113533303/216253034-f1d1f596-9cf4-4756-b538-abf378177297.png)
