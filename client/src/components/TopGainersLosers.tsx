@@ -15,6 +15,10 @@ const FINANCIAL_MODELING_API_KEY = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY;
 const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
+const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_3;
+const FINANCIAL_MODELING_API_KEY_4 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_4;
 
 const TopGainersLosers: React.FC = () => {
   const [gainers, setGainers] = useState<Data[] | null>(null);
@@ -32,10 +36,10 @@ const TopGainersLosers: React.FC = () => {
     try {
       const [gainersResponse, losersResponse] = await axios.all([
         axios.get<Data[]>(
-          `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY}`
+          `https://financialmodelingprep.com/api/v3/stock_market/gainers?apikey=${FINANCIAL_MODELING_API_KEY_3}`
         ),
         axios.get<Data[]>(
-          `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY}`
+          `https://financialmodelingprep.com/api/v3/stock_market/losers?apikey=${FINANCIAL_MODELING_API_KEY_3}`
         ),
       ]);
       if (gainersResponse && losersResponse) {

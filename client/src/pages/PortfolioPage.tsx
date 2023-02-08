@@ -112,7 +112,7 @@ const PortfolioPage: React.FC = () => {
     const fetchQuotes = async () => {
       try {
         const response = await axios.get<Quote[]>(
-          `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY}`
+          `https://financialmodelingprep.com/api/v3/quote/${symbols}?apikey=${FINANCIAL_MODELING_API_KEY_4}`
         );
         setQuotes(response.data);
       } catch (err) {

@@ -89,7 +89,7 @@ const SymbolPage: React.FC = () => {
   const fetchCompanyQuote = async () => {
     try {
       const response = await axios.get(
-        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_3}`
+        `https://financialmodelingprep.com/api/v3/quote/${params.symbol}?apikey=${FINANCIAL_MODELING_API_KEY_2}`
       );
       if (response.data) {
         setCompanyQuote(response.data);

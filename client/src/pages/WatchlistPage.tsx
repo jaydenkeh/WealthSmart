@@ -16,6 +16,8 @@ const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
 const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_3;
+const FINANCIAL_MODELING_API_KEY_4 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_4;
 interface UserData {
   userName: string;
   email: string;

@@ -19,6 +19,8 @@ const FINANCIAL_MODELING_API_KEY_2 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_2;
 const FINANCIAL_MODELING_API_KEY_3 = import.meta.env
   .VITE_FINANCIAL_MODELING_API_KEY_3;
+const FINANCIAL_MODELING_API_KEY_4 = import.meta.env
+  .VITE_FINANCIAL_MODELING_API_KEY_4;
 
 const MARKET_CAP_URL = `https://financialmodelingprep.com/api/v3/stock-screener`;
 
@@ -37,7 +39,7 @@ const TopMarketCap: React.FC = () => {
           isEtf: false,
           isActivelyTrading: true,
           exchange: "NYSE,NASDAQ",
-          apikey: FINANCIAL_MODELING_API_KEY,
+          apikey: FINANCIAL_MODELING_API_KEY_3,
         },
       });
       if (response) {
