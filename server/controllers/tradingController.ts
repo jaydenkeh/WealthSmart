@@ -39,7 +39,7 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
           totalCashBalance: accountValue.totalCashBalance - price * quantity,
         },
       });
-      res.status(201).json({
+      return res.status(201).json({
         message: "Trade successful",
         trade,
         portfolio,
@@ -51,7 +51,8 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
       return res
         .status(400)
         .json({ message: "You do not have enough shares to sell" });
-    } else if (portfolio) {
+    }
+    if (portfolio) {
       // Calculation of profit or loss for sell order executed by user (not used for buy orders)
       let profitorloss = price * quantity - portfolio.purchasePrice * quantity;
       if (action === "buy" && accountValue) {
@@ -81,7 +82,7 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
             totalCashBalance: accountValue.totalCashBalance - price * quantity,
           },
         });
-        res.status(201).json({
+        return res.status(201).json({
           message: "Trade successful",
           trade,
           portfolio,
@@ -119,7 +120,7 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
               accountValue.accumulatedProfitLoss + profitorloss,
           },
         });
-        res.status(201).json({
+        return res.status(201).json({
           message: "Trade successful",
           trade,
           portfolio,
@@ -153,7 +154,7 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
               accountValue.accumulatedProfitLoss + profitorloss,
           },
         });
-        res.status(201).json({
+        return res.status(201).json({
           message: "Trade successful",
           trade,
           portfolio,
@@ -162,7 +163,7 @@ tradingRouter.post("/", async (req: Request, res: Response) => {
       }
     }
   } catch (err: any) {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   } finally {
     await prisma.$disconnect();
   }
