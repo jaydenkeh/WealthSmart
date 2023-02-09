@@ -102,7 +102,7 @@ Project is built with the following technologies:
 
 ## Contact
 
-- https://github.com/jaydenkeh
+DM me on [LinkedIn](https://www.linkedin.com/in/jaydenkeh/) to request for a demo!
 
 ## License
 
