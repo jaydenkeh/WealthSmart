@@ -11,22 +11,28 @@ Wealth Smart is a full stack web application built with TypeScript, React, Expre
 ## User Story with Snippets
 
 New user sign up and login to the main page of the app
-![Signup&Login_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/WealthSmart-SignupLogin-demo.gif)
+![Signup&Login_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/signup-login-demo.gif)
 
 Main page upon successful login, user will be able to view the largest companies by market cap and top gainers/losers (of the day) of the U.S market. Data presented is real-time and obtained from Financial Modeling Prep API
 ![MainPage_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/mainpage-demo.gif)
 
-Clicking into the ticker lead users to the trading page where the one year candlestick chart is presented using highcharts; user can decide on the price and quantity to buy/sell for specific ticker
+Clicking into the ticker lead users to the Symbol page where the one year candlestick chart is presented using highcharts; user can decide on the price and quantity to buy/sell for specific ticker
 ![WealthSmart_TradingPage](https://user-images.githubusercontent.com/113533303/216252977-68fe551d-c4d8-424d-8cf6-227aec953eaa.png)
 
-User is able to execute buy or sell order at individual Symbol page, and user will not be able to oversell the security if existing holding quantity is lower
+User can search for specific security by ticker or security name using the Search bar - Search bar is accessible throughout the App
+![Searchbar_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/searchbar-demo.gif)
+
+User is able to execute buy or sell order at individual Symbol page, and user will not be able to oversell the security if existing holding quantity is lower than sell request quantity
 ![Buy_Sell_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/buy-sell-demo.gif)
 
-User existing holdings will be presented in the portfolio page
-![WealthSmart_PortfolioPage](https://user-images.githubusercontent.com/113533303/216253079-7562f8fc-3663-4ff3-90c9-849bbc5f5003.png)
+Upon successfully executing a buy order, user existing holdings will be presented in the Portfolio page
+![Trade_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/trade-demo.gif)
+
+User is able to view their trade records in the Trading History page
+![Trade_History_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/trade-history-demo.gif)
 
 User can add or delete ticker from their watchlist
-![WealthSmart_WatchlistPage](https://user-images.githubusercontent.com/113533303/216253109-6fb140c0-e92b-4979-8c61-e450158dec78.png)
+![WatchlistPage_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/watchlist-demo.gif)
 
 ## Technical Used
 
