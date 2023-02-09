@@ -10,16 +10,16 @@ Wealth Smart is a full stack web application built with TypeScript, React, Expre
 
 ## User Story with Snippets
 
-New user sign up and login to the main page of the app
+New user sign up and login to the main page of the App
 ![Signup&Login_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/signup-login-demo.gif)
 
 Main page upon successful login, user will be able to view the largest companies by market cap and top gainers/losers (of the day) of the U.S market. Data presented is real-time and obtained from Financial Modeling Prep API
 ![MainPage_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/mainpage-demo.gif)
 
-Clicking into the ticker lead users to the Symbol page where the one year candlestick chart is presented using highcharts; user can decide on the price and quantity to buy/sell for specific ticker
+Clicking the ticker will lead user to the Symbol page where the one year candlestick chart is presented using highcharts; user can decide on the price and quantity to buy/sell for specific ticker
 ![WealthSmart_TradingPage](https://user-images.githubusercontent.com/113533303/216252977-68fe551d-c4d8-424d-8cf6-227aec953eaa.png)
 
-User can search for specific security by ticker or security name using the Search bar - Search bar is accessible throughout the App
+User can search for specific security by ticker or security name using the Search bar, and the Search bar is accessible throughout the App
 ![Searchbar_Demo](https://github.com/jaydenkeh/WealthSmart/blob/main/client/public/searchbar-demo.gif)
 
 User is able to execute buy or sell order at individual Symbol page, and user will not be able to oversell the security if existing holding quantity is lower than sell request quantity
